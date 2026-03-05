@@ -1,4 +1,4 @@
-<!DOCTYPE. html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -52,7 +52,27 @@ body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(-
 /* --- Layout Styles --- */
 header { background: var(--header-bg); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px var(--shadow); position: sticky; top: 0; z-index: 1000; }
 .logo { font-size: 28px; font-weight: 800; color: var(--accent-pink); }
-.nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; margin-left: 20px; cursor: pointer; }
+
+/* UPDATED NAV LINKS CSS TO MATCH TRENDING BUTTON */
+.nav-links a { 
+    text-decoration: none; 
+    color: white; 
+    background-color: var(--accent-pink); 
+    padding: 10px 22px; 
+    border-radius: 50px; 
+    font-weight: bold; 
+    margin-left: 15px; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 10px var(--glow);
+    display: inline-block;
+}
+.nav-links a:hover { 
+    transform: translateY(-2px); 
+    filter: brightness(1.05); 
+    box-shadow: 0 6px 15px var(--glow); 
+}
+
 .hero { text-align: center; padding: 60px 20px; background: var(--hero-grad); }
 .brand-name { color: var(--accent-pink); }
 
@@ -96,8 +116,8 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
 <header>
     <div class="logo">Craftopedia</div>
     <div style="display: flex; align-items: center; gap: 20px;">
-        <nav class="nav-links"><a onclick="showView('home')">Home</a><a href="#trending">Trending</a></nav>
-        <button onclick="toggleTheme()" style="padding: 8px 15px; border-radius: 50px; cursor: pointer; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);">ðŸŒ™ Theme</button>
+        <nav class="nav-links"><a onclick="showView('home')">Home</a><a href="trending.html">Trending</a></nav>
+        <button onclick="toggleTheme()" style="padding: 8px 15px; border-radius: 50px; cursor: pointer; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);">🌙 Theme</button>
     </div>
 </header>
 
@@ -106,7 +126,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     <div class="search-container">
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search (Rose, Draw)..." onkeypress="if(event.key==='Enter') searchCraft()">
-            <button onclick="searchCraft()">ðŸ”</button>
+            <button onclick="searchCraft()">🔍</button>
         </div>
         <div id="search-feedback" style="margin-top:10px; font-weight:bold;"></div>
     </div>
@@ -166,7 +186,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     </div>
 </div>
 
-<footer><p>Â© 2026 Craftopedia | Elevate Your Creativity</p></footer>
+<footer><p>© 2026 Craftopedia | Elevate Your Creativity</p></footer>
 
 <script>
 let lastView = 'home';
@@ -287,11 +307,11 @@ const paperCraftsLibrary = [
 const drawingCraftsLibrary = [
     { 
         id: "sketch1", title: "Pencil Drawing", img: "drawing.jpeg", 
-           
+            
     },
    { 
         id: "sketch1", title: "Pooh Drawing", img: "Pooh.jpg", 
-     },
+      },
         
     { 
         id: "sketch2", title: " Mickey mouse Drawing", img: "Mickey mouse.jpg", 
@@ -496,4 +516,5 @@ function toggleTheme() {
 }
 </script>
 </body>
+
 </html>
