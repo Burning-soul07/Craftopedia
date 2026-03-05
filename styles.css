@@ -1,0 +1,175 @@
+/* --- Theme Variables from Home Page --- */
+:root {
+    --bg-color: #fdfdfd;
+    --card-bg: #ffffff;
+    --text-main: #1e293b; 
+    --text-sub: #475569;
+    --header-bg: #ffffff;
+    --accent-pink: #ff6f91;
+    --border-color: #cbd5e1;
+    --shadow: rgba(0,0,0,0.08);
+    --glow: rgba(255, 111, 145, 0.3);
+    --hero-grad: linear-gradient(135deg, #fde2e4 0%, #e0f7fa 100%);
+}
+
+/* 1. Reset & Typography */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    overflow-x: hidden;
+    transition: 0.4s;
+}
+
+.hidden { display: none !important; }
+
+/* 2. Header & Search UI */
+header {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--hero-grad); /* Uses your beautiful pink gradient */
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 { font-size: 3rem; font-weight: 800; margin-bottom: 5px; color: var(--accent-pink); } /* Pink Title */
+header p { color: var(--text-sub); font-weight: 500; }
+
+#paper-plane-container {
+    font-size: 2.5rem;
+    position: absolute;
+    top: 30px;
+    left: -50px; 
+    animation: fly 10s linear infinite;
+}
+
+@keyframes fly {
+    0% { transform: translateX(0vw) rotate(15deg); }
+    100% { transform: translateX(110vw) rotate(15deg); }
+}
+
+.search-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+#search-input {
+    width: 100%;
+    max-width: 450px;
+    padding: 14px 25px;
+    border-radius: 40px;
+    border: 1px solid var(--border-color);
+    outline: none;
+    font-size: 1rem;
+    transition: 0.3s;
+    box-shadow: 0 0 15px var(--glow); /* Pink glow */
+}
+
+#search-input:focus { border-color: var(--accent-pink); background: #fff; }
+
+#search-btn {
+    padding: 14px 30px;
+    background-color: var(--accent-pink); /* Pink button */
+    color: white;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#search-btn:hover { background-color: #ff4d79; transform: scale(1.05); box-shadow: 0 0 15px var(--glow); }
+
+/* 3. Theater Mode (Watch Section) */
+#watch-section {
+    background-color: var(--bg-color);
+    padding: 40px 5%;
+    min-height: 100vh;
+}
+
+.watch-container {
+    display: flex;
+    gap: 40px;
+    max-width: 1700px;
+    margin: 0 auto;
+}
+
+.main-player { flex: 7; }
+
+.iframe-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 10px 30px var(--shadow);
+    border: 3px solid var(--accent-pink); /* Pink border around video */
+}
+
+.iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+#now-playing-title { margin-top: 30px; font-size: 1.8rem; font-weight: 600; color: var(--text-main); }
+
+.home-btn {
+    margin-top: 20px;
+    padding: 14px 28px;
+    background-color: var(--accent-pink); /* Pink Back button */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.home-btn:hover { background-color: #ff4d79; transform: translateX(-5px); box-shadow: 0 0 15px var(--glow); }
+
+.side-feed { flex: 3; max-height: 90vh; overflow-y: auto; padding-right: 15px; }
+.side-feed h3 { color: var(--accent-pink); margin-bottom: 20px;}
+
+/* 4. Gallery Grid */
+main { padding: 50px 20px; max-width: 95%; margin: 0 auto; }
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
+}
+
+/* Uniform Cards (Matches Home Page) */
+.video-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.4s;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.video-card:hover { transform: translateY(-8px); border-color: var(--accent-pink); box-shadow: 0 10px 25px var(--glow); }
+
+.thumbnail { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+
+.video-info { padding: 20px 24px; color: var(--text-main); }
+
+.video-title { font-size: 1.05rem; font-weight: 600; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Sidebar List Adjustments */
+#side-gallery .video-card { margin-bottom: 20px; }
+#side-gallery .video-title { font-size: 0.9rem; }
+
+@media (max-width: 1200px) {
+    .watch-container { flex-direction: column; }
+    .side-feed { max-height: none; }
+}

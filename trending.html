@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Craftopedia | Your Aesthetic Art Engine</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+        .top-back-btn {
+            position: fixed; 
+            top: 20px;
+            left: 20px;
+            background-color: #ff6f91; /* Your signature pink */
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 12px rgba(255, 111, 145, 0.4); /* Pink glow shadow */
+            transition: all 0.3s ease;
+            z-index: 9999; 
+            border: 2px solid transparent;
+        }
+
+        .top-back-btn:hover {
+            background-color: #ff4d79; /* Darker pink on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 111, 145, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="rozi (1).html" class="top-back-btn">⬅ Home</a>
+
+    <section id="watch-section" class="hidden">
+        <div class="watch-container">
+            <div class="main-player">
+                <div class="iframe-container">
+                    <iframe 
+                        id="youtube-player" 
+                        src="" 
+                        frameborder="0" 
+                        allow="autoplay; encrypted-media" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <h2 id="now-playing-title">Video Title</h2>
+                <div class="watch-actions">
+                    <button id="close-watch" class="home-btn">🏠 Back to Home Gallery</button>
+                </div>
+            </div>
+
+            <div class="side-feed">
+                <h3>More Crafts to Explore</h3>
+                <div id="side-gallery">
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery-section">
+        <header id="main-header">
+            <div id="paper-plane-container">✈️</div> 
+            <h1>Craftopedia</h1>
+            <p>Explore the best craft tutorials.</p>
+            
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for origami, clay, painting...">
+                <button id="search-btn">Search</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="video-gallery" class="gallery-grid">
+                </div>
+        </main>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
