@@ -49,6 +49,25 @@ body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(-
     100% { opacity: 0; transform: scale(1.8) rotate(20deg); }
 }
 
+/* --- ANIMATION: LOVE GLOW (HUP HUP) --- */
+#love-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #ffb6c1; 
+    display: none; z-index: 9999;
+    justify-content: center; align-items: center; overflow: hidden; pointer-events: none;
+}
+.love-emoji {
+    position: absolute; font-size: 45px; opacity: 0;
+    top: 50%; left: 50%;
+    animation: scatterLove 7s forwards ease-out; 
+}
+@keyframes scatterLove {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+    10% { opacity: 1; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.5) rotate(var(--rot)); }
+    85% { opacity: 1; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.5) rotate(var(--rot)); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--tx) * 1.2), calc(-50% + var(--ty) * 1.2)) scale(2) rotate(var(--rot)); }
+}
+
 /* --- Layout Styles --- */
 header { background: var(--header-bg); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px var(--shadow); position: sticky; top: 0; z-index: 1000; }
 .logo { font-size: 28px; font-weight: 800; color: var(--accent-pink); }
@@ -96,6 +115,10 @@ header { background: var(--header-bg); padding: 15px 5%; display: flex; justify-
 .radha-img { max-width: 550px; width: 100%; border-radius: 30px; border: 5px solid #FFD700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
 .radha-desc { font-size: 19px; line-height: 1.8; color: var(--text-main); margin-top: 20px; padding: 25px; background: var(--card-bg); border-radius: 20px; }
 
+/* Love / Hup Hup View */
+#love-view { padding: 40px 10%; text-align: center; }
+.love-img { max-width: 400px; width: 100%; border-radius: 20px; box-shadow: 0 0 30px rgba(255, 111, 145, 0.4); }
+
 /* Instruction View */
 .step-view-container { background: var(--card-bg); margin: 20px 5%; padding: 40px; border-radius: 30px; text-align: center; }
 .main-img { max-width: 450px; width: 100%; border-radius: 20px; border: 3px solid var(--accent-pink); margin-bottom: 20px; }
@@ -109,7 +132,6 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
 
 
 /* --- Profile Specific CSS --- */
-/* Scoped to .profile-container so it doesn't break your existing site layout */
 .profile-container {
     max-width: 800px;
     margin: 40px auto;
@@ -171,6 +193,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
 <body data-theme="light">
 
 <div id="special-overlay"></div>
+<div id="love-overlay"></div>
 
 <header>
     <div class="logo">Craftopedia</div>
@@ -230,6 +253,13 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     <div class="radha-desc">
         Radha is the embodiment of spiritual love and devotion. Her presence illuminates the soul and brings peace to the heart.
     </div>
+    <button class="back-btn" onclick="showView('home')">Back to Home</button>
+</div>
+
+<div id="love-view" class="hidden">
+    <h2 class="section-title" style="color:var(--accent-pink)">Sending Love!</h2>
+    <img src="hup hup.webp" class="love-img">
+    <br>
     <button class="back-btn" onclick="showView('home')">Back to Home</button>
 </div>
 
@@ -529,6 +559,10 @@ const diyCraftsLibrary = [
 // =======================================================
 const radhaKeywords = ["radhe radhe", "radha", "radha krishna", "RADHA", "RADHE RADHE"];
 
+// NEW: HUP HUP KEYWORDS
+const loveKeywords = ["hup hup", "love"];
+const loveEmojis = ["😍", "😘", "🥰", "🤗", "🎀"];
+
 /* --- DO NOT CHANGE LOGIC BELOW --- */
 
 function triggerSpecialAnimation() {
@@ -558,9 +592,39 @@ function triggerSpecialAnimation() {
     }, 7000); 
 }
 
-/* Added 'profile' to the array here to make the toggle work */
+// NEW: TRIGGER LOVE ANIMATION FOR HUP HUP
+function triggerLoveAnimation() {
+    const overlay = document.getElementById('love-overlay');
+    overlay.style.display = 'flex';
+    overlay.innerHTML = '';
+    
+    for(let i=0; i<80; i++) {
+        setTimeout(() => {
+            const span = document.createElement('span');
+            span.className = 'love-emoji';
+            span.innerText = loveEmojis[Math.floor(Math.random() * loveEmojis.length)];
+            
+            const tx = (Math.random() - 0.5) * 120 + 'vw';
+            const ty = (Math.random() - 0.5) * 120 + 'vh';
+            const rot = (Math.random() * 360) + 'deg';
+
+            span.style.setProperty('--tx', tx);
+            span.style.setProperty('--ty', ty);
+            span.style.setProperty('--rot', rot);
+            
+            overlay.appendChild(span);
+        }, i * 40); 
+    }
+
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        showView('love');
+    }, 7000); 
+}
+
+/* Added 'profile' and 'love' to the array here to make the toggle work */
 function showView(viewId) {
-    ['home', 'category', 'step', 'radha', 'profile'].forEach(v => document.getElementById(v + '-view').classList.add('hidden'));
+    ['home', 'category', 'step', 'radha', 'profile', 'love'].forEach(v => document.getElementById(v + '-view').classList.add('hidden'));
     document.getElementById(viewId + '-view').classList.remove('hidden');
     document.getElementById('search-feedback').innerText = "";
 }
@@ -568,7 +632,8 @@ function showView(viewId) {
 function searchCraft() {
     const q = document.getElementById("searchInput").value.toLowerCase().trim();
     if(radhaKeywords.includes(q)) { triggerSpecialAnimation(); }
-    else if(searchOnlyLibrary[q]) { renderSteps(searchOnlyLibrary[q]); }
+    else if(loveKeywords.includes(q)) { triggerLoveAnimation(); } // Triggers the hidden hup hup feature
+    else if(typeof searchOnlyLibrary !== 'undefined' && searchOnlyLibrary[q]) { renderSteps(searchOnlyLibrary[q]); }
     else { document.getElementById('search-feedback').innerHTML = "<span style='color:red'>Try 'Rose' or 'Draw'</span>"; }
 }
 
