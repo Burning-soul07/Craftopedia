@@ -23,22 +23,63 @@
     <div class="card">
         <img src="craftopedia-text.jpeg" alt="Craftopedia Logo" class="logo-img">
         <h2>Registration</h2>
-        <form action="ak.html">
+        
+        <form id="registerForm">
             <div class="input-box">
                 <i class="fa fa-user"></i>
-                <input type="text" placeholder="User ID / Name" required>
-            </div>
-            <div class="input-box">
-                <i class="fa fa-lock"></i>
-                <input type="password" placeholder="Password" required>
+                <input type="text" id="nameInput" placeholder="User ID / Name" required>
             </div>
             <div class="input-box">
                 <i class="fa fa-envelope"></i>
-                <input type="email" placeholder="Email" required>
+                <input type="email" id="emailInput" placeholder="Email" required>
+            </div>
+            <div class="input-box">
+                <i class="fa fa-lock"></i>
+                <input type="password" id="passwordInput" placeholder="Password" required>
             </div>
             <button class="btn" type="submit">Register</button>
         </form>
         <div class="link">Already have an account? <a href="login.html">Login here</a></div>
     </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCJY-J3-sls0EqqXYuK4L3hQoNetgN6_Pw",
+          authDomain: "craftopedia-5e0d7.firebaseapp.com",
+          projectId: "craftopedia-5e0d7",
+          storageBucket: "craftopedia-5e0d7.firebasestorage.app",
+          messagingSenderId: "334399887698",
+          appId: "1:334399887698:web:7d4c07a02d28ecbf1c428b",
+          measurementId: "G-4D11R741G0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', (event) => {
+            event.preventDefault(); 
+
+            const name = document.getElementById('nameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    updateProfile(userCredential.user, {
+                        displayName: name
+                    }).then(() => {
+                        alert("Account created! Welcome to Craftopedia, " + name + "!");
+                        window.location.href = "ak.html"; 
+                    });
+                })
+                .catch((error) => {
+                    alert("Registration failed: " + error.message);
+                });
+        });
+    </script>
 </body>
 </html>
