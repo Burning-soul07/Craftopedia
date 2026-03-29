@@ -1,11 +1,12 @@
-// 1. Configuration - USING YOUR NEW FRESH KEY
+// 1. Configuration
 const API_KEY = 'AIzaSyBLMP7cOIj0mh95dFFxEGThvXCqSxzVRXg'; 
 let currentQuery = 'best art and craft tutorials'; 
 const MAX_RESULTS = 12;
-
 let nextPageToken = ''; 
 let isFetching = false; 
-let currentVideoState = null; // Tracks what is currently playing
+
+// --- STATE: THIS IS THE SOURCE OF TRUTH ---
+let activeVideo = { id: '', title: '', img: '' }; 
 
 // DOM Elements
 const galleryContainer = document.getElementById('video-gallery');
@@ -23,44 +24,30 @@ const watchLikeBtn = document.getElementById('watch-like-btn');
 async function fetchCraftVideos(isNewSearch = false) {
     if (isFetching) return; 
     isFetching = true;
-
-    if (isNewSearch) {
-        galleryContainer.innerHTML = '';
-        nextPageToken = '';
-    }
+    if (isNewSearch) { galleryContainer.innerHTML = ''; nextPageToken = ''; }
 
     const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(currentQuery)}&type=video&videoEmbeddable=true&videoDuration=medium&videoCategoryId=26&pageToken=${nextPageToken}&key=${API_KEY}`;
 
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-
-        if (!response.ok) {
-            console.error("🛑 API Error:", data.error.message);
-            isFetching = false;
-            return;
-        }
+        if (!response.ok) { console.error("API Error:", data.error.message); isFetching = false; return; }
 
         nextPageToken = data.nextPageToken || ''; 
-
         data.items.forEach(item => {
             if(item.id.videoId) {
                 createCard(galleryContainer, item.id.videoId, item.snippet.thumbnails.high.url, item.snippet.title);
             }
         });
         isFetching = false;
-    } catch (error) {
-        console.error("Network Error:", error);
-        isFetching = false;
-    }
+    } catch (error) { console.error("Network Error:", error); isFetching = false; }
 }
 
-// 3. Card Creation (With Thumbnail Hearts)
+// 3. Card Creation (With "Leaking" Fix)
 function createCard(target, videoId, img, title) {
     const card = document.createElement('div');
     card.classList.add('video-card');
     card.setAttribute('data-id', videoId);
-    card.style.position = 'relative'; 
 
     card.innerHTML = `
         <button class="like-btn" id="like-${videoId}">
@@ -70,33 +57,27 @@ function createCard(target, videoId, img, title) {
         <div class="video-info"><h3 class="video-title">${title}</h3></div>
     `;
     
+    // Clicking the card opens the video
     card.addEventListener('click', () => openVideo(videoId, title, img));
     target.appendChild(card);
 
+    // FIX: Clicking the heart STOPS here and doesn't open the video
     const likeBtn = card.querySelector(`#like-${videoId}`);
-    
-    // Heart Click Logic
     likeBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); 
+        e.stopPropagation(); // CRITICAL: Stops the card click from firing!
         if(window.toggleLike) {
             window.toggleLike(videoId, title, img, likeBtn);
-            
-            // Sync with Watch Screen button if this video is currently playing
-            if(currentVideoState && currentVideoState.id === videoId) {
-                watchLikeBtn.classList.toggle('active');
-            }
         }
     });
 
-    // Check Firebase if liked
-    setTimeout(() => {
-        if(window.checkIfLiked) window.checkIfLiked(videoId, likeBtn);
-    }, 1000);
+    // Initial heart check
+    setTimeout(() => { if(window.checkIfLiked) window.checkIfLiked(videoId, likeBtn); }, 1000);
 }
 
 // 4. Watch Screen Logic
 function openVideo(videoId, title, img) {
-    currentVideoState = { id: videoId, title: title, img: img };
+    // UPDATE THE SOURCE OF TRUTH
+    activeVideo = { id: videoId, title: title, img: img };
 
     youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
     nowPlayingTitle.innerText = title;
@@ -104,7 +85,7 @@ function openVideo(videoId, title, img) {
     gallerySection.classList.add('hidden');
     watchSection.classList.remove('hidden');
 
-    // Load Side Gallery
+    // Populate Side Gallery
     sideGallery.innerHTML = galleryContainer.innerHTML;
     const sideCards = sideGallery.querySelectorAll('.video-card');
     sideCards.forEach((card) => {
@@ -112,23 +93,35 @@ function openVideo(videoId, title, img) {
         const cardTitle = card.querySelector('.video-title').innerText;
         const cardImg = card.querySelector('.thumbnail').src;
         card.addEventListener('click', () => openVideo(id, cardTitle, cardImg));
+        
+        // Re-attach like listeners for the side gallery clones
+        const btn = card.querySelector('.like-btn');
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(window.toggleLike) window.toggleLike(id, cardTitle, cardImg, btn);
+        });
     });
 
-    // Reset and Check Watch Screen Heart
+    // Reset Watch Button state
     watchLikeBtn.classList.remove('active');
     if (window.checkIfLiked) window.checkIfLiked(videoId, watchLikeBtn);
 
     window.scrollTo(0, 0);
 }
 
-// 5. Watch Screen Heart Click
-watchLikeBtn.addEventListener('click', () => {
-    if (currentVideoState && window.toggleLike) {
-        window.toggleLike(currentVideoState.id, currentVideoState.title, currentVideoState.img, watchLikeBtn);
+// 5. Watch Screen Heart - Only uses the Active Video
+watchLikeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (activeVideo.id && window.toggleLike) {
+        window.toggleLike(activeVideo.id, activeVideo.title, activeVideo.img, watchLikeBtn);
         
-        // Sync the thumbnail heart in the background
-        const galleryBtn = document.getElementById(`like-${currentVideoState.id}`);
-        if (galleryBtn) galleryBtn.classList.toggle('active');
+        // Sync the heart in the side gallery if it's visible
+        const sideBtn = sideGallery.querySelector(`#like-${activeVideo.id}`);
+        if (sideBtn) sideBtn.classList.toggle('active');
+        
+        // Sync the heart in the main gallery
+        const mainBtn = galleryContainer.querySelector(`#like-${activeVideo.id}`);
+        if (mainBtn) mainBtn.classList.toggle('active');
     }
 });
 
@@ -136,29 +129,14 @@ function closeVideo() {
     youtubePlayer.src = ""; 
     watchSection.classList.add('hidden');
     gallerySection.classList.remove('hidden');
-    currentVideoState = null;
     window.scrollTo(0, 0);
 }
 
-// 6. Search & Scroll
-function handleSearch() {
+// 6. Search & UI
+searchBtn.addEventListener('click', () => {
     const val = searchInput.value.trim();
-    if (val !== "") {
-        currentQuery = `${val} art and craft DIY tutorial`; 
-        fetchCraftVideos(true);
-    }
-}
-
-window.addEventListener('scroll', () => {
-    if (!gallerySection.classList.contains('hidden')) {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
-            if (nextPageToken && !isFetching) fetchCraftVideos();
-        }
-    }
+    if (val !== "") { currentQuery = `${val} art and craft DIY tutorial`; fetchCraftVideos(true); }
 });
-
-searchBtn.addEventListener('click', handleSearch);
-searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 closeWatchBtn.addEventListener('click', closeVideo);
 
 fetchCraftVideos();
