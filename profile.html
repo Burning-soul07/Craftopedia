@@ -278,10 +278,28 @@
     };
 
     window.removeLike = async (docId) => {
-        if(confirm("Remove this item?")) {
-            await deleteDoc(doc(db, "users", auth.currentUser.uid, "likedCrafts", docId));
+    // We check if the user is still logged in
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Please login to manage your profile.");
+        return;
+    }
+
+    if (confirm("Are you sure you want to remove this from your collection?")) {
+        try {
+            // FIX: Changed 'likedCrafts' to 'likes' to match your data
+            const itemRef = doc(db, "users", user.uid, "likes", docId);
+            await deleteDoc(itemRef);
+            
+            // Note: Since we are using onSnapshot, the grid will 
+            // automatically refresh itself! No need to reload the page.
+            console.log("Successfully removed document:", docId);
+        } catch (error) {
+            console.error("Delete Error:", error);
+            alert("Could not remove item. Please try again.");
         }
-    };
+    }
+};
 
     window.handleLogout = () => signOut(auth).then(() => window.location.href = "login.html");
 </script>
