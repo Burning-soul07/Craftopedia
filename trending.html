@@ -8,32 +8,35 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <link rel="stylesheet" href="styles.css">
 
     <style>
         .top-back-btn {
             position: fixed; 
-            top: 20px;
-            left: 20px;
-            background-color: #ff6f91; /* Signature pink */
-            color: white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
+            top: 20px; left: 20px;
+            background-color: #ff6f91; color: white;
+            padding: 10px 25px; border-radius: 50px;
+            text-decoration: none; font-weight: bold;
             font-family: 'Poppins', sans-serif;
             box-shadow: 0 4px 12px rgba(255, 111, 145, 0.4);
-            transition: all 0.3s ease;
-            z-index: 9999; 
-            border: 2px solid transparent;
+            transition: all 0.3s ease; z-index: 9999; border: 2px solid transparent;
         }
+        .top-back-btn:hover { background-color: #ff4d79; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 111, 145, 0.6); }
 
-        .top-back-btn:hover {
-            background-color: #ff4d79; 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 111, 145, 0.6);
+        /* --- Like Button Styles --- */
+        .like-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%;
+            width: 35px; height: 35px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; transition: 0.3s; z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            color: #cbd5e1; /* Grey by default */
         }
+        .like-btn.active { color: #ff6f91 !important; transform: scale(1.2); }
+        .like-btn:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(255,111,145,0.4); }
     </style>
 </head>
 <body>
@@ -42,14 +45,7 @@
         <div class="watch-container">
             <div class="main-player">
                 <div class="iframe-container">
-                    <iframe 
-                        id="youtube-player" 
-                        src="" 
-                        frameborder="0" 
-                        allow="autoplay; encrypted-media" 
-                        referrerpolicy="strict-origin-when-cross-origin" 
-                        allowfullscreen>
-                    </iframe>
+                    <iframe id="youtube-player" src="" frameborder="0" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <h2 id="now-playing-title">Video Title</h2>
                 <div class="watch-actions">
@@ -59,16 +55,13 @@
 
             <div class="side-feed">
                 <h3>More Crafts to Explore</h3>
-                <div id="side-gallery">
-                    </div>
+                <div id="side-gallery"></div>
             </div>
         </div>
     </section>
 
     <section id="gallery-section">
-        
         <a href="ak.html" class="top-back-btn">⬅ Home</a>
-
         <header id="main-header">
             <div id="paper-plane-container">✈️</div> 
             <h1>Craftopedia</h1>
@@ -81,11 +74,58 @@
         </header>
 
         <main>
-            <div id="video-gallery" class="gallery-grid">
-                </div>
+            <div id="video-gallery" class="gallery-grid"></div>
         </main>
     </section>
 
     <script src="script.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkerGAYmcUC9YF1V9rk-3Ex_ropIlLUS8",
+            authDomain: "craftopedia-d611d.firebaseapp.com",
+            projectId: "craftopedia-d611d",
+            storageBucket: "craftopedia-d611d.firebasestorage.app",
+            messagingSenderId: "1092964176836",
+            appId: "1:1092964176836:web:d82013865be5fe00bd8a91",
+            measurementId: "G-LRK408VGVW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Toggle Like (Saves as type: 'video')
+        window.toggleLike = async (id, title, img, btnElement) => {
+            if (!auth.currentUser) {
+                alert("Please login to save videos!");
+                return;
+            }
+            const likeRef = doc(db, "users", auth.currentUser.uid, "likes", id);
+            const docSnap = await getDoc(likeRef);
+            
+            if (docSnap.exists()) {
+                await deleteDoc(likeRef);
+                btnElement.classList.remove('active');
+            } else {
+                await setDoc(likeRef, { id, title, img, type: 'video', timestamp: Date.now() });
+                btnElement.classList.add('active');
+            }
+        };
+
+        // Check Initial Like State
+        window.checkIfLiked = async (id, btnElement) => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user && btnElement) {
+                    const docSnap = await getDoc(doc(db, "users", user.uid, "likes", id));
+                    if (docSnap.exists()) btnElement.classList.add('active');
+                }
+            });
+        };
+    </script>
 </body>
 </html>
