@@ -1,125 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Craftopedia | My Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root { --accent-pink: #ff6f91; --bg-color: #fdfdfd; --card-bg: #ffffff; --text-main: #1e293b; --border-color: #cbd5e1; --shadow: rgba(0,0,0,0.08); }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 50px; color: var(--text-main); }
-        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px var(--shadow); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 28px; font-weight: 800; color: var(--accent-pink); text-decoration: none; }
-        .nav-links a { text-decoration: none; color: white; background: var(--accent-pink); padding: 8px 20px; border-radius: 50px; font-weight: bold; margin-left: 10px; cursor: pointer; transition: 0.3s; }
-        .nav-links a:hover { opacity: 0.9; transform: translateY(-2px); }
-
-        .hidden { display: none !important; }
-
-        /* Profile Styles */
-        .profile-hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #fde2e4 0%, #e0f7fa 100%); }
-        .profile-card { max-width: 600px; margin: -50px auto 40px; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        .avatar-circle { width: 100px; height: 100px; background: var(--accent-pink); color: white; font-size: 40px; line-height: 100px; border-radius: 50%; margin: 0 auto 20px; font-weight: bold; box-shadow: 0 4px 15px var(--shadow); }
-        .info-group { margin-bottom: 20px; }
-        .info-group label { display: block; font-size: 13px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-        .info-group p { font-size: 18px; font-weight: 600; margin: 0; }
-        .edit-input { width: 80%; padding: 10px; border: 2px solid var(--accent-pink); border-radius: 12px; font-size: 16px; text-align: center; display: none; margin: 0 auto 10px; outline: none; }
-        .btn-edit { background: none; border: 1.5px solid var(--accent-pink); color: var(--accent-pink); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-edit:hover { background: var(--accent-pink); color: white; }
-
-        /* Two Sections Styling */
-        .favorites-section { padding: 0 5%; max-width: 1200px; margin: 40px auto; }
-        .section-title { font-size: 26px; margin-bottom: 30px; border-left: 6px solid var(--accent-pink); padding-left: 15px; font-weight: 800; text-align: left; }
-        .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-        
-        /* Card Styling */
-        .liked-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 10px var(--shadow); transition: 0.3s; cursor: pointer; position: relative; }
-        .liked-card:hover { transform: translateY(-5px); border-color: var(--accent-pink); }
-        .liked-card img { width: 100%; height: 180px; object-fit: cover; }
-        
-        /* Play Icon for Videos */
-        .play-overlay { 
-            position: absolute; top: 90px; left: 50%; transform: translate(-50%, -50%); 
-            background: rgba(255, 111, 145, 0.9); color: white; width: 50px; height: 50px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 20px; opacity: 0; transition: 0.3s; pointer-events: none;
-        }
-        .liked-card:hover .play-overlay { opacity: 1; }
-        
-        .liked-info { padding: 15px; text-align: center; }
-        .liked-info h3 { font-size: 16px; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 38px; }
-        .btn-remove { background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
-        .btn-remove:hover { background: #ef4444; color: white; }
-        
-        .empty-state { padding: 40px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 25px; border: 2px dashed #cbd5e1; grid-column: 1 / -1; font-size: 14px; }
-        .logout-btn { background: #1e293b; color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
-
-        /* Step View Styles */
-        .step-view-container { background: var(--card-bg); margin: 20px auto; max-width: 1000px; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .main-img { max-width: 450px; width: 100%; border-radius: 20px; border: 3px solid var(--accent-pink); margin-bottom: 20px; }
-        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
-        .step-card { background: var(--bg-color); padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); text-align: left; }
-        .step-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
-        .back-btn { background: var(--accent-pink); color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 30px; transition: 0.3s; }
-        .back-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    </style>
-</head>
-<body>
-
-<header>
-    <a href="ak.html" class="logo">Craftopedia</a>
-    <nav class="nav-links">
-        <a href="ak.html">Home</a>
-        <a href="trending.html">Trending</a>
-    </nav>
-</header>
-
-<div id="profile-main-view">
-    <section class="profile-hero">
-        <h1 id="welcome-header">Welcome!</h1>
-    </section>
-
-    <div class="profile-card">
-        <div class="avatar-circle" id="user-initial">?</div>
-        <div class="info-group">
-            <label>Display Name</label>
-            <p id="display-name">Loading...</p>
-            <input type="text" id="name-input" class="edit-input">
-            <button class="btn-edit" id="edit-btn" onclick="window.toggleEdit()">Edit Name</button>
-        </div>
-        <div class="info-group">
-            <label>Email Address</label>
-            <p id="user-email">...</p>
-        </div>
-        <button class="logout-btn" onclick="window.handleLogout()">Logout</button>
-    </div>
-
-    <section class="favorites-section">
-        <h2 class="section-title">🎨 My Saved Projects</h2>
-        <div id="static-grid" class="favorites-grid">
-            <div class="empty-state">Loading your gallery...</div>
-        </div>
-    </section>
-
-    <section class="favorites-section" style="margin-top: 60px;">
-        <h2 class="section-title">📺 Liked Video Tutorials</h2>
-        <div id="video-grid" class="favorites-grid">
-            <div class="empty-state">Loading your videos...</div>
-        </div>
-    </section>
-</div>
-
-<div id="step-view" class="hidden">
-    <div class="step-view-container">
-        <h2 id="step-title" class="section-title" style="text-align: center;"></h2>
-        <img id="step-main-img" class="main-img" src="">
-        <h3 class="section-title" style="text-align: center;">Instructions</h3>
-        <div id="step-cards-container" class="steps-grid"></div>
-        <button class="back-btn" onclick="window.showProfile()">⬅ Back to Profile</button>
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getFirestore, collection, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
@@ -137,7 +16,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- CRAFT LIBRARIES ---
+    // --- LIBRARIES (Unchanged) ---
     const paperCraftsLibrary = [
         { id: "rose", title: "Handmade Rose", img: "rose.jpg", steps: [{img: "step1.jpeg", text: "Step 1: Cut colour paper into equal square pieces."},{img: "step2.jpeg", text: "Step 2: Fold the paper to create petal shape."},{img: "step3.jpeg", text: "Step 3: Glue all petals together and attach a stem."}] },
         { id: "snowman", title: "Snowman", img: "Snowman.jpeg", steps: [{img: "Snowman Step1.jpg", text: "Step 1: Take red and white colour paper."},{img: "Snowman Step2.jpg", text: "Step 2: Cut 2 white paper strips and fold in circle shape."},{img: "Snowman Step3.jpg", text: "Step 3: Cut a red semicircle for cap and stick white strip on top."},{img: "Snowman Step4.jpg", text: "Step 4: Add eyes, nose, smile, cheeks and buttons."},{img: "Snowman Step5.jpg", text: "Step 5: Stick small dry sticks on both sides."}] },
@@ -170,18 +49,15 @@
     const videoGrid = document.getElementById('video-grid');
     let isEditing = false;
 
-    // --- LOAD DATA ---
-// --- LOAD DATA (Corrected Syntax) ---
+    // --- THE LOADING LOGIC ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            const name = user.displayName || "Art Lover";
-            nameText.innerText = name;
+            nameText.innerText = user.displayName || "Art Lover";
             emailText.innerText = user.email;
-            initialCircle.innerText = name.charAt(0).toUpperCase();
-            nameInput.value = name;
-            document.getElementById('welcome-header').innerText = `Hi, ${name}!`;
+            initialCircle.innerText = (user.displayName || "A").charAt(0).toUpperCase();
+            document.getElementById('welcome-header').innerText = `Hi, ${user.displayName || "Art Lover"}!`;
 
-            // FIX: Ensure we are using the "likes" collection
+            // Using the 'likes' collection for everything
             const likesRef = collection(db, "users", user.uid, "likes");
             
             onSnapshot(likesRef, (snapshot) => {
@@ -201,7 +77,7 @@
                     const item = docSnap.data();
                     const isVideo = item.type === 'video';
                     
-                    // CRITICAL: Notice the backticks (`) at the start and end of this block!
+                    // The template literal (backticks) starts here:
                     const cardHTML = `
                         <div class="liked-card" onclick="window.openCraft('${item.id}', '${item.type || 'craft'}')">
                             ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
@@ -224,7 +100,7 @@
                     }
                 });
 
-                if (!hasStatic) staticGrid.innerHTML = `<div class="empty-state">No static projects saved yet.</div>`;
+                if (!hasStatic) staticGrid.innerHTML = `<div class="empty-state">No projects saved yet.</div>`;
                 if (!hasVideo) videoGrid.innerHTML = `<div class="empty-state">No videos liked yet.</div>`;
             });
         } else {
@@ -232,7 +108,7 @@
         }
     });
 
-    // --- BUTTON FUNCTIONS ---
+    // --- GLOBAL FUNCTIONS ---
     window.openCraft = (id, type) => {
         if (type === 'video') {
             window.open(`https://www.youtube.com/watch?v=${id}`, '_blank');
@@ -277,13 +153,12 @@
     };
 
     window.removeLike = async (docId) => {
-        if(confirm("Remove this item?")) {
-            // FIX: Using "likes" collection to match your data
-            await deleteDoc(doc(db, "users", auth.currentUser.uid, "likes", docId));
+        if(confirm("Remove this item from your collection?")) {
+            const user = auth.currentUser;
+            if (user) {
+                await deleteDoc(doc(db, "users", user.uid, "likes", docId));
+            }
         }
     };
 
     window.handleLogout = () => signOut(auth).then(() => window.location.href = "login.html");
-</script>
-</body>
-</html>
