@@ -6,69 +6,36 @@
     <title>Craftopedia | My Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        :root {
-            --accent-pink: #ff6f91;
-            --bg-color: #fdfdfd;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --border-color: #cbd5e1;
-            --shadow: rgba(0,0,0,0.08);
-        }
-
+        :root { --accent-pink: #ff6f91; --bg-color: #fdfdfd; --card-bg: #ffffff; --text-main: #1e293b; --border-color: #cbd5e1; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 50px; color: var(--text-main); }
-        
-        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px var(--shadow); position: sticky; top: 0; z-index: 1000; }
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); sticky; top: 0; z-index: 1000; }
         .logo { font-size: 28px; font-weight: 800; color: var(--accent-pink); text-decoration: none; }
-        .nav-links a { text-decoration: none; color: white; background: var(--accent-pink); padding: 8px 20px; border-radius: 50px; font-weight: bold; margin-left: 10px; cursor: pointer; transition: 0.3s; }
-        .nav-links a:hover { opacity: 0.9; transform: translateY(-2px); }
-
+        .nav-links a { text-decoration: none; color: white; background: var(--accent-pink); padding: 8px 20px; border-radius: 50px; font-weight: bold; margin-left: 10px; cursor: pointer; }
         .profile-hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #fde2e4 0%, #e0f7fa 100%); }
-        
-        .profile-card {
-            max-width: 600px;
-            margin: -50px auto 40px;
-            background: white;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .avatar-circle { width: 100px; height: 100px; background: var(--accent-pink); color: white; font-size: 40px; line-height: 100px; border-radius: 50%; margin: 0 auto 20px; font-weight: bold; box-shadow: 0 4px 15px var(--shadow); }
-
+        .profile-card { max-width: 600px; margin: -50px auto 40px; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .avatar-circle { width: 100px; height: 100px; background: var(--accent-pink); color: white; font-size: 40px; line-height: 100px; border-radius: 50%; margin: 0 auto 20px; font-weight: bold; }
         .info-group { margin-bottom: 20px; }
-        .info-group label { display: block; font-size: 13px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .info-group label { display: block; font-size: 14px; color: #64748b; margin-bottom: 5px; }
         .info-group p { font-size: 18px; font-weight: 600; margin: 0; }
-        
-        .edit-input {
-            width: 80%; padding: 10px; border: 2px solid var(--accent-pink); border-radius: 12px;
-            font-size: 16px; text-align: center; display: none; margin: 0 auto 10px; outline: none;
-        }
-
-        .btn-edit { background: none; border: 1.5px solid var(--accent-pink); color: var(--accent-pink); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-edit:hover { background: var(--accent-pink); color: white; }
-
-        /* Liked Items Grid */
+        .edit-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; text-align: center; display: none; }
+        .btn-edit { background: none; border: 1px solid var(--accent-pink); color: var(--accent-pink); padding: 5px 15px; border-radius: 20px; cursor: pointer; margin-top: 10px; }
         .favorites-section { padding: 0 5%; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 26px; margin-bottom: 30px; border-left: 6px solid var(--accent-pink); padding-left: 15px; font-weight: 800; }
-        
-        .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-        
-        .liked-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 10px var(--shadow); transition: 0.3s; position: relative; }
-        .liked-card:hover { transform: translateY(-5px); border-color: var(--accent-pink); }
-        .liked-card img { width: 100%; height: 180px; object-fit: cover; }
+        .section-title { font-size: 24px; margin-bottom: 30px; border-left: 5px solid var(--accent-pink); padding-left: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .liked-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .liked-card img { width: 100%; height: 160px; object-fit: cover; }
         .liked-info { padding: 15px; text-align: center; }
-        .liked-info h3 { font-size: 16px; margin-bottom: 12px; }
-
-        .btn-remove { background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
-        .btn-remove:hover { background: #ef4444; color: white; }
-
-        .empty-state { padding: 50px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 25px; border: 2px dashed #cbd5e1; grid-column: 1 / -1; }
+        .btn-remove { background: #fee2e2; color: #ef4444; border: none; padding: 8px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 20px; border: 2px dashed #cbd5e1; grid-column: 1/-1; }
+        .logout-btn { background: #334155; color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; margin-top: 20px; }
         
-        .logout-btn { background: #1e293b; color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        /* Debug Info Bar */
+        #debug-log { background: #333; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; position: fixed; bottom: 0; width: 100%; z-index: 9999; display: none; }
     </style>
 </head>
 <body>
+
+<div id="debug-log">Debug Mode Active...</div>
 
 <header>
     <a href="ak.html" class="logo">Craftopedia</a>
@@ -78,32 +45,27 @@
     </nav>
 </header>
 
-<section class="profile-hero">
-    <h1 id="welcome-msg">Welcome Back!</h1>
-</section>
+<section class="profile-hero"><h1 id="welcome-header">Welcome!</h1></section>
 
 <div class="profile-card">
     <div class="avatar-circle" id="user-initial">?</div>
-    
     <div class="info-group">
-        <label>Your Name</label>
+        <label>Display Name</label>
         <p id="display-name">Loading...</p>
         <input type="text" id="name-input" class="edit-input">
-        <button class="btn-edit" id="edit-btn" onclick="toggleEdit()">Edit Profile</button>
+        <button class="btn-edit" id="edit-btn" onclick="toggleEdit()">Edit Name</button>
     </div>
-
     <div class="info-group">
         <label>Email Address</label>
         <p id="user-email">...</p>
     </div>
-
     <button class="logout-btn" onclick="handleLogout()">Logout</button>
 </div>
 
 <section class="favorites-section">
-    <h2 class="section-title">My Liked Collection</h2>
-    <div id="favorites-grid" class="favorites-grid">
-        <div class="empty-state">Loading your gallery...</div>
+    <h2 class="section-title">My Liked Crafts</h2>
+    <div id="favorites-grid" class="grid">
+        <div class="empty-state">Looking for your hearts... 💖</div>
     </div>
 </section>
 
@@ -126,65 +88,66 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const debug = (msg) => { console.log(msg); const el = document.getElementById('debug-log'); el.style.display = 'block'; el.innerText += " | " + msg; };
+
+    // Elements
     const nameText = document.getElementById('display-name');
     const nameInput = document.getElementById('name-input');
     const emailText = document.getElementById('user-email');
     const initialCircle = document.getElementById('user-initial');
     const editBtn = document.getElementById('edit-btn');
     const favoritesGrid = document.getElementById('favorites-grid');
-    const welcomeMsg = document.getElementById('welcome-msg');
 
     let isEditing = false;
 
-    // 1. Auth & Data Listener
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            const currentName = user.displayName || "Art Lover";
-            nameText.innerText = currentName;
-            welcomeMsg.innerText = `Hi, ${currentName}!`;
+            debug("User Logged In: " + user.uid);
+            const name = user.displayName || "Art Lover";
+            nameText.innerText = name;
             emailText.innerText = user.email;
-            initialCircle.innerText = currentName.charAt(0).toUpperCase();
-            nameInput.value = currentName;
+            initialCircle.innerText = name.charAt(0).toUpperCase();
+            nameInput.value = name;
+            document.getElementById('welcome-header').innerText = "Hi, " + name + "!";
 
-            // Load the liked items
-            loadLikedItems(user.uid);
+            // START LOADING DATA
+            loadLikes(user.uid);
         } else {
+            debug("No user found, redirecting...");
             window.location.href = "login.html";
         }
     });
 
-    // 2. Real-time Firestore Listener
-    function loadLikedItems(uid) {
+    function loadLikes(uid) {
+        debug("Connecting to Firestore 'likes' collection...");
         const likesRef = collection(db, "users", uid, "likes");
-        
-        // This function auto-updates the UI whenever a like is added/removed
+
         onSnapshot(likesRef, (snapshot) => {
+            debug("Database Response! Documents count: " + snapshot.docs.length);
+            
             if (snapshot.empty) {
-                favoritesGrid.innerHTML = `
-                    <div class="empty-state">
-                        <p>No liked crafts yet. Go heart some in the gallery!</p>
-                    </div>`;
+                favoritesGrid.innerHTML = `<div class="empty-state"><p>Your collection is empty. Go like some crafts in the Home gallery!</p></div>`;
                 return;
             }
 
             favoritesGrid.innerHTML = snapshot.docs.map(doc => {
                 const item = doc.data();
+                debug("Rendering item: " + item.title + " (Image: " + item.img + ")");
                 return `
                     <div class="liked-card">
-                        <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
+                        <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Image+Missing'">
                         <div class="liked-info">
                             <h3>${item.title}</h3>
-                            <button class="btn-remove" onclick="removeLike('${item.id}')">
-                                <i class="fa-solid fa-trash-can"></i> Remove
-                            </button>
+                            <button class="btn-remove" onclick="removeLike('${item.id}')"><i class="fa-solid fa-trash"></i> Remove</button>
                         </div>
                     </div>
                 `;
             }).join('');
+        }, (err) => {
+            debug("FIRESTORE ERROR: " + err.message);
         });
     }
 
-    // 3. Edit Profile Logic
     window.toggleEdit = async () => {
         if (!isEditing) {
             nameText.style.display = 'none';
@@ -194,26 +157,16 @@
         } else {
             const newName = nameInput.value.trim();
             if (newName && auth.currentUser) {
-                try {
-                    await updateProfile(auth.currentUser, { displayName: newName });
-                    nameText.innerText = newName;
-                    initialCircle.innerText = newName.charAt(0).toUpperCase();
-                    welcomeMsg.innerText = `Hi, ${newName}!`;
-                    alert("Profile updated!");
-                } catch (e) { alert("Error: " + e.message); }
+                await updateProfile(auth.currentUser, { displayName: newName });
+                location.reload(); 
             }
-            nameText.style.display = 'block';
-            nameInput.style.display = 'none';
-            editBtn.innerText = "Edit Profile";
             isEditing = false;
         }
     };
 
-    // 4. Remove Logic
     window.removeLike = async (id) => {
-        if (confirm("Remove this item from your favorites?")) {
-            const user = auth.currentUser;
-            await deleteDoc(doc(db, "users", user.uid, "likes", id));
+        if(confirm("Remove this craft?")) {
+            await deleteDoc(doc(db, "users", auth.currentUser.uid, "likes", id));
         }
     };
 
