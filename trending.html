@@ -150,7 +150,7 @@
             return;
         }
 
-        const likeRef = doc(db, "users", user.uid, "likedCrafts", id);
+      const likeRef = doc(db, "users", user.uid, "likes", id);
         
         try {
             const docSnap = await getDoc(likeRef);
