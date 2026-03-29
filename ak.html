@@ -414,37 +414,53 @@ function toggleTheme() {
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // 1. Auth Guard: Redirect if not logged in
     onAuthStateChanged(auth, (user) => {
         if (!user) {
             window.location.href = "login.html";
         }
     });
 
-    // --- Like/Heart System ---
-    
-    // 1. Toggle Like in Database
+    // --- GLOBAL FUNCTIONS (Attached to window so buttons can see them) ---
+
+    // 2. Toggle Like in Database
     window.toggleLike = async (id, title, img, btnElement) => {
         const user = auth.currentUser;
-        if (!user) return;
+        if (!user) {
+            alert("Please login to like crafts!");
+            return;
+        }
 
         const likeRef = doc(db, "users", user.uid, "likes", id);
-        const docSnap = await getDoc(likeRef);
-
-        if (docSnap.exists()) {
-            await deleteDoc(likeRef);
-            btnElement.classList.remove('active');
-        } else {
-            await setDoc(likeRef, { id, title, img, timestamp: Date.now() });
-            btnElement.classList.add('active');
+        
+        try {
+            const docSnap = await getDoc(likeRef);
+            if (docSnap.exists()) {
+                await deleteDoc(likeRef);
+                btnElement.classList.remove('active');
+                console.log("Unliked:", title);
+            } else {
+                await setDoc(likeRef, { id, title, img, timestamp: Date.now() });
+                btnElement.classList.add('active');
+                console.log("Liked:", title);
+            }
+        } catch (error) {
+            console.error("Firestore Error:", error);
         }
     };
 
-    // 2. Check initial state
+    // 3. Check if an item is already liked (for UI updates)
     window.checkIfLiked = async (id, btnElement) => {
+        // We wait for auth to be ready before checking Firestore
         onAuthStateChanged(auth, async (user) => {
             if (user && btnElement) {
-                const docSnap = await getDoc(doc(db, "users", user.uid, "likes", id));
-                if (docSnap.exists()) btnElement.classList.add('active');
+                const likeRef = doc(db, "users", user.uid, "likes", id);
+                const docSnap = await getDoc(likeRef);
+                if (docSnap.exists()) {
+                    btnElement.classList.add('active');
+                } else {
+                    btnElement.classList.remove('active');
+                }
             }
         });
     };
