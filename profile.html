@@ -199,17 +199,20 @@
                     const item = doc.data();
                     const isVideo = item.type === 'video';
                     
-                    const cardHTML = `
-                        <div class="liked-card" onclick="window.openCraft('${item.id}', '${item.type || 'craft'}')">
-                            ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
-                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
-                            <div class="liked-info">
-                                <h3>${item.title}</h3>
-                                <button class="btn-remove" onclick="event.stopPropagation(); window.removeLike('${doc.id}')">
-                                    <i class="fa-solid fa-trash"></i> Remove
-                                </button>
-                            </div>
-                        </div>
+                   const cardHTML = `
+        <div class="liked-card" onclick="window.openCraft('${item.id}', '${item.type || 'craft'}')">
+            ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
+            <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
+            <div class="liked-info">
+                <h3>${item.title}</h3>
+                
+                <button class="btn-remove" onclick="event.stopPropagation(); window.removeLike('${doc.id}')">
+                    <i class="fa-solid fa-trash"></i> Remove
+                </button>
+                
+            </div>
+        </div>
+    `;
                     `;
 
                     if (isVideo) {
