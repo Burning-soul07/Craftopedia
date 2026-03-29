@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Craftopedia | My Profile</title>
+    <link rel="stylesheet" href="styles.css"> <style>
+        :root {
+            --accent-pink: #ff6f91;
+            --bg-color: #fdfdfd;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --border-color: #cbd5e1;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 50px; }
+        
+        /* Navigation styling matching ak.html */
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 28px; font-weight: 800; color: var(--accent-pink); text-decoration: none; }
+        .nav-links a { text-decoration: none; color: white; background: var(--accent-pink); padding: 8px 20px; border-radius: 50px; font-weight: bold; margin-left: 10px; cursor: pointer; }
+
+        .profile-hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #fde2e4 0%, #e0f7fa 100%); }
+        
+        .profile-card {
+            max-width: 600px;
+            margin: -50px auto 40px;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .avatar-circle { width: 100px; height: 100px; background: var(--accent-pink); color: white; font-size: 40px; line-height: 100px; border-radius: 50%; margin: 0 auto 20px; font-weight: bold; }
+
+        .info-group { margin-bottom: 20px; }
+        .info-group label { display: block; font-size: 14px; color: #64748b; margin-bottom: 5px; }
+        .info-group p { font-size: 18px; font-weight: 600; margin: 0; color: var(--text-main); }
+        
+        .edit-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            display: none;
+        }
+
+        .btn-edit { background: none; border: 1px solid var(--accent-pink); color: var(--accent-pink); padding: 5px 15px; border-radius: 20px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-edit:hover { background: var(--accent-pink); color: white; }
+
+        .favorites-section { padding: 0 5%; }
+        .section-title { font-size: 24px; margin-bottom: 30px; border-left: 5px solid var(--accent-pink); padding-left: 15px; }
+        
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 20px; border: 2px dashed #cbd5e1; }
+        
+        .logout-btn { background: #334155; color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="ak.html" class="logo">Craftopedia</a>
+    <nav class="nav-links">
+        <a href="ak.html">Home</a>
+        <a href="trending.html">Trending</a>
+    </nav>
+</header>
+
+<section class="profile-hero">
+    <h1>Welcome Back!</h1>
+</section>
+
+<div class="profile-card">
+    <div class="avatar-circle" id="user-initial">?</div>
+    
+    <div class="info-group">
+        <label>Display Name</label>
+        <p id="display-name">Loading...</p>
+        <input type="text" id="name-input" class="edit-input">
+        <button class="btn-edit" id="edit-btn" onclick="toggleEdit()">Edit Name</button>
+    </div>
+
+    <div class="info-group">
+        <label>Email Address</label>
+        <p id="user-email">Loading...</p>
+    </div>
+
+    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+</div>
+
+<section class="favorites-section">
+    <h2 class="section-title">My Liked Crafts & Videos</h2>
+    <div id="favorites-grid" class="empty-state">
+        <p>You haven't liked any crafts yet. Go explore!</p>
+    </div>
+</section>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBkerGAYmcUC9YF1V9rk-3Ex_ropIlLUS8",
+        authDomain: "craftopedia-d611d.firebaseapp.com",
+        projectId: "craftopedia-d611d",
+        storageBucket: "craftopedia-d611d.firebasestorage.app",
+        messagingSenderId: "1092964176836",
+        appId: "1:1092964176836:web:d82013865be5fe00bd8a91",
+        measurementId: "G-LRK408VGVW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const nameText = document.getElementById('display-name');
+    const nameInput = document.getElementById('name-input');
+    const emailText = document.getElementById('user-email');
+    const initialCircle = document.getElementById('user-initial');
+    const editBtn = document.getElementById('edit-btn');
+
+    let isEditing = false;
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            nameText.innerText = user.displayName || "Art Lover";
+            emailText.innerText = user.email;
+            initialCircle.innerText = (user.displayName || "A").charAt(0).toUpperCase();
+            nameInput.value = user.displayName || "";
+        } else {
+            window.location.href = "login.html";
+        }
+    });
+
+    window.toggleEdit = async () => {
+        if (!isEditing) {
+            // Switch to Edit Mode
+            nameText.style.display = 'none';
+            nameInput.style.display = 'block';
+            editBtn.innerText = "Save Changes";
+            isEditing = true;
+        } else {
+            // Save Mode
+            const newName = nameInput.value.trim();
+            if (newName && auth.currentUser) {
+                try {
+                    await updateProfile(auth.currentUser, { displayName: newName });
+                    nameText.innerText = newName;
+                    initialCircle.innerText = newName.charAt(0).toUpperCase();
+                    alert("Profile Updated!");
+                } catch (error) {
+                    alert("Error updating name: " + error.message);
+                }
+            }
+            nameText.style.display = 'block';
+            nameInput.style.display = 'none';
+            editBtn.innerText = "Edit Name";
+            isEditing = false;
+        }
+    };
+
+    window.handleLogout = () => {
+        signOut(auth).then(() => window.location.href = "login.html");
+    };
+</script>
+
+</body>
+</html>
