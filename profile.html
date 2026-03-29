@@ -181,7 +181,7 @@
             document.getElementById('welcome-header').innerText = `Hi, ${name}!`;
 
             // Updated Collection: likedCrafts
-            const likesRef = collection(db, "users", user.uid, "likedCrafts");
+           const likesRef = collection(db, "users", user.uid, "likes");
             onSnapshot(likesRef, (snapshot) => {
                 staticGrid.innerHTML = '';
                 videoGrid.innerHTML = '';
