@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <link rel="stylesheet" href="styles.css">
 
     <style>
@@ -34,6 +36,35 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(255, 111, 145, 0.6);
         }
+
+        /* --- THE INDESTRUCTIBLE LIKE BUTTON CSS --- */
+        .like-btn {
+            position: absolute !important;
+            top: 15px !important;
+            right: 15px !important;
+            z-index: 1000 !important; 
+            background: white !important;
+            border: none !important;
+            border-radius: 50% !important;
+            width: 40px !important;
+            height: 40px !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+            transition: transform 0.2s ease;
+        }
+        .like-btn:active { transform: scale(0.9); }
+        .like-btn i { color: #cbd5e1; font-size: 20px; pointer-events: none; }
+        .like-btn.active i { color: #ff6f91 !important; }
+
+        .watch-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -54,19 +85,20 @@
                 <h2 id="now-playing-title">Video Title</h2>
                 <div class="watch-actions">
                     <button id="close-watch" class="home-btn">🏠 Back to Home Gallery</button>
+                    <button id="watch-like-btn" class="like-btn" style="position: relative !important; top: 0 !important; right: 0 !important;">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
                 </div>
             </div>
 
             <div class="side-feed">
                 <h3>More Crafts to Explore</h3>
-                <div id="side-gallery">
-                    </div>
+                <div id="side-gallery"></div>
             </div>
         </div>
     </section>
 
     <section id="gallery-section">
-        
         <a href="ak.html" class="top-back-btn">⬅ Home</a>
 
         <header id="main-header">
@@ -81,11 +113,60 @@
         </header>
 
         <main>
-            <div id="video-gallery" class="gallery-grid">
-                </div>
+            <div id="video-gallery" class="gallery-grid"></div>
         </main>
     </section>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=4"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkerGAYmcUC9YF1V9rk-3Ex_ropIlLUS8",
+            authDomain: "craftopedia-d611d.firebaseapp.com",
+            projectId: "craftopedia-d611d",
+            storageBucket: "craftopedia-d611d.firebasestorage.app",
+            messagingSenderId: "1092964176836",
+            appId: "1:1092964176836:web:d82013865be5fe00bd8a91"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // GLOBAL LIKE FUNCTIONS
+        window.toggleLike = async (id, title, img, btnElement) => {
+            if (!auth.currentUser) {
+                alert("Please log in to save crafts!");
+                return;
+            }
+            const userId = auth.currentUser.uid;
+            const likeRef = doc(db, "users", userId, "likedCrafts", id);
+            
+            try {
+                const docSnap = await getDoc(likeRef);
+                if (docSnap.exists()) {
+                    await deleteDoc(likeRef);
+                    btnElement.classList.remove('active');
+                } else {
+                    await setDoc(likeRef, { title, img, type: 'video', videoId: id, timestamp: Date.now() });
+                    btnElement.classList.add('active');
+                }
+            } catch (err) { console.error("Like Error:", err); }
+        };
+
+        window.checkIfLiked = async (id, btnElement) => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const likeRef = doc(db, "users", user.uid, "likedCrafts", id);
+                    const docSnap = await getDoc(likeRef);
+                    if (docSnap.exists()) btnElement.classList.add('active');
+                }
+            });
+        };
+    </script>
 </body>
 </html>
