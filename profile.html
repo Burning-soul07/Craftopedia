@@ -26,23 +26,31 @@
         .btn-edit { background: none; border: 1.5px solid var(--accent-pink); color: var(--accent-pink); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .btn-edit:hover { background: var(--accent-pink); color: white; }
 
-        /* Liked Items Grid */
-        .favorites-section { padding: 0 5%; max-width: 1200px; margin: 0 auto; }
+        /* Two Sections Styling */
+        .favorites-section { padding: 0 5%; max-width: 1200px; margin: 40px auto; }
         .section-title { font-size: 26px; margin-bottom: 30px; border-left: 6px solid var(--accent-pink); padding-left: 15px; font-weight: 800; text-align: left; }
         .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
         
+        /* Card Styling */
         .liked-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 10px var(--shadow); transition: 0.3s; cursor: pointer; position: relative; }
         .liked-card:hover { transform: translateY(-5px); border-color: var(--accent-pink); }
         .liked-card img { width: 100%; height: 180px; object-fit: cover; }
         
-        /* Small badge to show if it's a video */
-        .video-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        /* Play Icon for Videos */
+        .play-overlay { 
+            position: absolute; top: 90px; left: 50%; transform: translate(-50%, -50%); 
+            background: rgba(255, 111, 145, 0.9); color: white; width: 50px; height: 50px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 20px; opacity: 0; transition: 0.3s; pointer-events: none;
+        }
+        .liked-card:hover .play-overlay { opacity: 1; }
         
         .liked-info { padding: 15px; text-align: center; }
         .liked-info h3 { font-size: 16px; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 38px; }
         .btn-remove { background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
         .btn-remove:hover { background: #ef4444; color: white; }
-        .empty-state { padding: 50px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 25px; border: 2px dashed #cbd5e1; grid-column: 1 / -1; }
+        
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 25px; border: 2px dashed #cbd5e1; grid-column: 1 / -1; font-size: 14px; }
         .logout-btn { background: #1e293b; color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
 
         /* Step View Styles */
@@ -86,9 +94,16 @@
     </div>
 
     <section class="favorites-section">
-        <h2 class="section-title">My Liked Collection</h2>
-        <div id="favorites-grid" class="favorites-grid">
+        <h2 class="section-title">🎨 My Saved Projects</h2>
+        <div id="static-grid" class="favorites-grid">
             <div class="empty-state">Loading your gallery...</div>
+        </div>
+    </section>
+
+    <section class="favorites-section" style="margin-top: 60px;">
+        <h2 class="section-title">📺 Liked Video Tutorials</h2>
+        <div id="video-grid" class="favorites-grid">
+            <div class="empty-state">Loading your videos...</div>
         </div>
     </section>
 </div>
@@ -122,15 +137,15 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- FULL CRAFT LIBRARIES ---
+    // --- CRAFT LIBRARIES ---
     const paperCraftsLibrary = [
-        { id: "rose", title: "Handmade Rose", img: "rose.jpg", main: "rose.jpg", steps: [{img: "step1.jpeg", text: "Step 1: Cut colour paper into equal square pieces."},{img: "step2.jpeg", text: "Step 2: Fold the paper to create petal shape."},{img: "step3.jpeg", text: "Step 3: Glue all petals together and attach a stem."}] },
-        { id: "snowman", title: "Snowman", img: "Snowman.jpeg", main: "Snowman.jpeg", steps: [{img: "Snowman Step1.jpg", text: "Step 1: Take red and white colour paper."},{img: "Snowman Step2.jpg", text: "Step 2: Cut 2 white paper strips and fold in circle shape."},{img: "Snowman Step3.jpg", text: "Step 3: Cut a red semicircle for cap and stick white strip on top."},{img: "Snowman Step4.jpg", text: "Step 4: Add eyes, nose, smile, cheeks and buttons."},{img: "Snowman Step5.jpg", text: "Step 5: Stick small dry sticks on both sides."}] },
-        { id: "fish", title: "Fish", img: "Fish.jpeg", main: "Fish.jpeg", steps: [{img: "Fish1.jpg", text: "Step 1: Take rectangle shaped colour paper."},{img: "Fish2.jpg", text: "Step 2: Fold like a fan (Zig-Zag fold)."},{img: "Fish3.jpg", text: "Step 3: Fold the fan into half and glue both sides."},{img: "Fish4.jpg", text: "Step 4: Cut triangle for tail and stick googly eyes."}] },
-        { id: "tree", title: "Tree", img: "Tree.jpg", main: "Tree.jpg", steps: [{img: "Tree1.jpg", text: "Step 1: Take green colour paper."},{img: "Tree2.jpg", text: "Step 2: Cut different curved shapes and paste bottom to top."},{img: "Tree3.jpg", text: "Step 3: Paste a yellow star on top."},{img: "Tree4.jpg", text: "Step 4: Decorate with pom-poms and white dots."}] },
-        { id: "crown", title: "Crown", img: "Crown.jpeg", main: "Crown.jpeg", steps: [{img: "Crown1.jpg", text: "Step 1: Cut crown shape from paper."},{img: "Crown2.jpg", text: "Step 2: Stick golden tape or paper."},{img: "Crown3.jpg", text: "Step 3: Add decorative beads."},{img: "Crown4.jpg", text: "Step 4: Stick beads properly."}] },
-        { id: "icecream", title: "Ice Cream", img: "I.jpg", main: "I.jpg", steps: [{img: "I1.jpg", text: "Step 1: Cut cone shape from paper."},{img: "I2.jpg", text: "Step 2: Roll and stick into cone shape."},{img: "I3.jpg", text: "Step 3: Cut fruit shapes and glue on top."},{img: "I4.jpg", text: "Step 4: Insert fruit and straw."}] },
-        { id: "giftbox", title: "Pyramid Gift Box", img: "Gift box.jpg", main: "Gift box.jpg", steps: [{img: "G1.jpg", text: "Step 1: Take square paper."},{img: "G2.jpg", text: "Step 2: Draw fold lines."},{img: "G3.jpg", text: "Step 3: Cut along lines."},{img: "G4.jpg", text: "Step 4: Fold properly."},{img: "G5.jpg", text: "Step 5: Apply glue."},{img: "G6.jpg", text: "Step 6: Stick flaps together."},{img: "G7.jpg", text: "Step 7: Punch holes at top."},{img: "G8.jpg", text: "Step 8: Insert ribbon and tie."}] }
+        { id: "rose", title: "Handmade Rose", img: "rose.jpg", steps: [{img: "step1.jpeg", text: "Step 1: Cut colour paper into equal square pieces."},{img: "step2.jpeg", text: "Step 2: Fold the paper to create petal shape."},{img: "step3.jpeg", text: "Step 3: Glue all petals together and attach a stem."}] },
+        { id: "snowman", title: "Snowman", img: "Snowman.jpeg", steps: [{img: "Snowman Step1.jpg", text: "Step 1: Take red and white colour paper."},{img: "Snowman Step2.jpg", text: "Step 2: Cut 2 white paper strips and fold in circle shape."},{img: "Snowman Step3.jpg", text: "Step 3: Cut a red semicircle for cap and stick white strip on top."},{img: "Snowman Step4.jpg", text: "Step 4: Add eyes, nose, smile, cheeks and buttons."},{img: "Snowman Step5.jpg", text: "Step 5: Stick small dry sticks on both sides."}] },
+        { id: "fish", title: "Fish", img: "Fish.jpeg", steps: [{img: "Fish1.jpg", text: "Step 1: Take rectangle shaped colour paper."},{img: "Fish2.jpg", text: "Step 2: Fold like a fan (Zig-Zag fold)."},{img: "Fish3.jpg", text: "Step 3: Fold the fan into half and glue both sides."},{img: "Fish4.jpg", text: "Step 4: Cut triangle for tail and stick googly eyes."}] },
+        { id: "tree", title: "Tree", img: "Tree.jpg", steps: [{img: "Tree1.jpg", text: "Step 1: Take green colour paper."},{img: "Tree2.jpg", text: "Step 2: Cut different curved shapes and paste bottom to top."},{img: "Tree3.jpg", text: "Step 3: Paste a yellow star on top."},{img: "Tree4.jpg", text: "Step 4: Decorate with pom-poms and white dots."}] },
+        { id: "crown", title: "Crown", img: "Crown.jpeg", steps: [{img: "Crown1.jpg", text: "Step 1: Cut crown shape from paper."},{img: "Crown2.jpg", text: "Step 2: Stick golden tape or paper."},{img: "Crown3.jpg", text: "Step 3: Add decorative beads."},{img: "Crown4.jpg", text: "Step 4: Stick beads properly."}] },
+        { id: "icecream", title: "Ice Cream", img: "I.jpg", steps: [{img: "I1.jpg", text: "Step 1: Cut cone shape from paper."},{img: "I2.jpg", text: "Step 2: Roll and stick into cone shape."},{img: "I3.jpg", text: "Step 3: Cut fruit shapes and glue on top."},{img: "I4.jpg", text: "Step 4: Insert fruit and straw."}] },
+        { id: "giftbox", title: "Pyramid Gift Box", img: "Gift box.jpg", steps: [{img: "G1.jpg", text: "Step 1: Take square paper."},{img: "G2.jpg", text: "Step 2: Draw fold lines."},{img: "G3.jpg", text: "Step 3: Cut along lines."},{img: "G4.jpg", text: "Step 4: Fold properly."},{img: "G5.jpg", text: "Step 5: Apply glue."},{img: "G6.jpg", text: "Step 6: Stick flaps together."},{img: "G7.jpg", text: "Step 7: Punch holes at top."},{img: "G8.jpg", text: "Step 8: Insert ribbon and tie."}] }
     ];
     const drawingCraftsLibrary = [
         { id: "sketch_pencil", title: "Pencil Drawing", img: "drawing.jpeg", steps: [{img: "drawing.jpeg", text: "Follow the reference image to practice your shading."}] },
@@ -141,13 +156,8 @@
     ];
     const diyCraftsLibrary = [
         { id: "diy1", title: "Bottle Art", img: "bottle.jpg", steps: [{img: "b1.jpg", text: "Clean..."},{img: "b2.jpg", text: "Paint..."},{img: "b3.jpg", text: "Varnish..."}] },
-        { id: "diy2", title: "Popsicle Sticks House", img: "S.jpeg", steps: [{ img: "S1.jpeg", text: "Arrange ice cream sticks side by side to make the base and walls. Glue them properly and let them dry." },{ img: "S2.jpeg", text: "Cut sticks to make two triangle shapes for the roof support. Attach them on top and stick flat sticks over them to form the roof." },{ img: "S3.jpeg", text: "Make a small round hole in the front for the bird entrance and stick a small piece below it as a perch." },{ img: "S4.jpeg", text: "Paint the birdhouse and decorate it. Let it dry completely." }] },
-        { id: "diy3", title: "Paper Cup House", img: "H.jpeg", steps: [{ img: "H1.jpg", text: "Take all materials." },{ img: "H2.jpg", text: "Cut a circle, fold and glue it into a cone shape for the roof." },{ img: "H3.jpg", text: "Draw windows, doors and grass on the paper cup." },{ img: "H4.jpg", text: "Stick the cone roof on top. It is ready!" }] },
-        { id: "diy4", title: "Popsicle Stick Treasure Box", img: "Box.jpeg", steps: [{ img: "Box1.jpg", text: "Paint the popsicle sticks and let them dry completely." },{ img: "Box2.jpg", text: "Glue sticks side by side to make the base and walls. Attach a curved lid." },{ img: "Box3.jpg", text: "Fix the lid and secure all edges properly." },{ img: "Box4.jpg", text: "Decorate with pearl stickers, beads, or a bow." }] },
-        { id: "diy5", title: "Quilled Earrings", img: "Quiled earrings.jpeg", steps: [{ img: "Q1.jpeg", text: "Roll a thin paper strip tightly using a quilling tool and secure with glue." },{ img: "Q2.jpeg", text: "Press the coil gently to shape it into a teardrop." },{ img: "Q3.jpeg", text: "Make 6–7 similar petals." },{ img: "Q4.jpeg", text: "Arrange petals in a circle and glue them." },{ img: "Q5.jpeg", text: "Stick a small pearl bead in the center." },{ img: "Q6.jpeg", text: "Attach an earring hook at the back." }] },
-        { id: "diy6", title: "Mini Aquarium", img: "M.jpeg", steps: [{ img: "M1.jpg", text: "Paint the base white and create a blue gradient background." },{ img: "M2.jpg", text: "Paint stones and green sea plants." },{ img: "M3.jpg", text: "Make small clay fish, dry and paint them." },{ img: "M4.jpg", text: "Stick fish, add bubbles and apply varnish if desired." }] },
-        { id: "diy7", title: "Pencil Holder", img: "Pencil holder.jpeg", steps: [{ img: "P1.jpg", text: "Cover the paper cup with colored paper." },{ img: "P2.jpg", text: "Stick googly eyes and draw a smile." },{ img: "P3.jpeg", text: "Add wings and antennae." }] },
-        { id: "diy8", title: "Popsicle Stick Star", img: "Star.jpeg", steps: [{ img: "Star1.jpeg", text: "Take 8-10 ice cream sticks, glue and paint." },{ img: "Star2.jpeg", text: "Arrange 6 sticks in a star shape." },{ img: "Star3.jpeg", text: "Apply glue at each joining point and let dry." },{ img: "Star4.jpeg", text: "Add extra sticks to make it decorative." },{ img: "Star5.jpeg", text: "Paint the star and let it dry." },{ img: "Star6.jpeg", text: "Attach thread for hanging." }] }
+        { id: "diy2", title: "Popsicle Sticks House", img: "S.jpeg", steps: [{ img: "S1.jpeg", text: "Arrange ice cream sticks side by side." },{ img: "S2.jpeg", text: "Build triangle roof support." },{ img: "S3.jpeg", text: "Cut entrance hole." },{ img: "S4.jpeg", text: "Paint and dry." }] },
+        { id: "diy3", title: "Paper Cup House", img: "H.jpeg", steps: [{ img: "H1.jpg", text: "Get materials." },{ img: "H2.jpg", text: "Make cone roof." },{ img: "H3.jpg", text: "Draw details." },{ img: "H4.jpg", text: "Stick roof." }] }
     ];
 
     const allCrafts = [...paperCraftsLibrary, ...drawingCraftsLibrary, ...diyCraftsLibrary];
@@ -156,7 +166,8 @@
     const nameInput = document.getElementById('name-input');
     const emailText = document.getElementById('user-email');
     const initialCircle = document.getElementById('user-initial');
-    const favoritesGrid = document.getElementById('favorites-grid');
+    const staticGrid = document.getElementById('static-grid');
+    const videoGrid = document.getElementById('video-grid');
     let isEditing = false;
 
     // --- LOAD DATA ---
@@ -169,32 +180,49 @@
             nameInput.value = name;
             document.getElementById('welcome-header').innerText = `Hi, ${name}!`;
 
-            const likesRef = collection(db, "users", user.uid, "likes");
+            // Updated Collection: likedCrafts
+            const likesRef = collection(db, "users", user.uid, "likedCrafts");
             onSnapshot(likesRef, (snapshot) => {
+                staticGrid.innerHTML = '';
+                videoGrid.innerHTML = '';
+                
                 if (snapshot.empty) {
-                    favoritesGrid.innerHTML = `<div class="empty-state"><p>No liked crafts yet. Start exploring the gallery!</p></div>`;
+                    staticGrid.innerHTML = `<div class="empty-state">No static projects saved yet.</div>`;
+                    videoGrid.innerHTML = `<div class="empty-state">No videos liked yet.</div>`;
                     return;
                 }
 
-                // Pass the type parameter so we know if it's a video or craft
-                favoritesGrid.innerHTML = snapshot.docs.map(doc => {
+                let hasStatic = false;
+                let hasVideo = false;
+
+                snapshot.docs.forEach(doc => {
                     const item = doc.data();
                     const isVideo = item.type === 'video';
-                    const badgeHTML = isVideo ? `<div class="video-badge"><i class="fa-brands fa-youtube" style="color:#ff0000"></i> Video</div>` : '';
                     
-                    return `
+                    const cardHTML = `
                         <div class="liked-card" onclick="window.openCraft('${item.id}', '${item.type || 'craft'}')">
-                            ${badgeHTML}
+                            ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
                             <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
                             <div class="liked-info">
                                 <h3>${item.title}</h3>
-                                <button class="btn-remove" onclick="event.stopPropagation(); window.removeLike('${item.id}')">
+                                <button class="btn-remove" onclick="event.stopPropagation(); window.removeLike('${doc.id}')">
                                     <i class="fa-solid fa-trash"></i> Remove
                                 </button>
                             </div>
                         </div>
                     `;
-                }).join('');
+
+                    if (isVideo) {
+                        hasVideo = true;
+                        videoGrid.innerHTML += cardHTML;
+                    } else {
+                        hasStatic = true;
+                        staticGrid.innerHTML += cardHTML;
+                    }
+                });
+
+                if (!hasStatic) staticGrid.innerHTML = `<div class="empty-state">No static projects saved yet.</div>`;
+                if (!hasVideo) videoGrid.innerHTML = `<div class="empty-state">No videos liked yet.</div>`;
             });
         } else {
             window.location.href = "login.html";
@@ -203,46 +231,34 @@
 
     // --- VIEW LOGIC ---
     window.openCraft = (id, type) => {
-        console.log("Opening item with ID:", id, "| Type:", type);
-
-        // 1. If it's a YouTube video, open it in a new tab!
         if (type === 'video') {
             window.open(`https://www.youtube.com/watch?v=${id}`, '_blank');
             return;
         }
 
-        // 2. Otherwise, it's a normal craft. Look it up in the library.
         const craft = allCrafts.find(c => c.id === id);
-        
         if (craft) {
             document.getElementById('step-title').innerText = craft.title;
-            document.getElementById('step-main-img').src = craft.img; // Use main img
+            document.getElementById('step-main-img').src = craft.img;
             
             const container = document.getElementById('step-cards-container');
-            if(craft.steps && craft.steps.length > 0) {
+            if(craft.steps) {
                 container.innerHTML = craft.steps.map((s, i) => `
                     <div class="step-card">
                         <img src="${s.img}" onerror="this.src='https://placehold.co/300x200?text=Step+${i+1}'">
                         <h4>Step ${i+1}</h4><p>${s.text}</p>
                     </div>
                 `).join('');
-            } else {
-                container.innerHTML = `<p style="text-align:center; padding: 20px;">Instructions coming soon!</p>`;
             }
-
-            // Switch Views
             document.getElementById('profile-main-view').classList.add('hidden');
             document.getElementById('step-view').classList.remove('hidden');
             window.scrollTo(0, 0);
-        } else {
-            alert("Instructions for this item are not available.");
         }
     };
 
     window.showProfile = () => {
         document.getElementById('step-view').classList.add('hidden');
         document.getElementById('profile-main-view').classList.remove('hidden');
-        window.scrollTo(0, 0);
     };
 
     window.toggleEdit = async () => {
@@ -261,14 +277,13 @@
         }
     };
 
-    window.removeLike = async (id) => {
-        if(confirm("Remove this item from your favorites?")) {
-            await deleteDoc(doc(db, "users", auth.currentUser.uid, "likes", id));
+    window.removeLike = async (docId) => {
+        if(confirm("Remove this item?")) {
+            await deleteDoc(doc(db, "users", auth.currentUser.uid, "likedCrafts", docId));
         }
     };
 
     window.handleLogout = () => signOut(auth).then(() => window.location.href = "login.html");
 </script>
-
 </body>
 </html>
