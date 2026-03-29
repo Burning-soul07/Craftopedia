@@ -6,36 +6,52 @@
     <title>Craftopedia | My Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        :root { --accent-pink: #ff6f91; --bg-color: #fdfdfd; --card-bg: #ffffff; --text-main: #1e293b; --border-color: #cbd5e1; }
+        :root { --accent-pink: #ff6f91; --bg-color: #fdfdfd; --card-bg: #ffffff; --text-main: #1e293b; --border-color: #cbd5e1; --shadow: rgba(0,0,0,0.08); }
         body { font-family: 'Poppins', sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 50px; color: var(--text-main); }
-        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); sticky; top: 0; z-index: 1000; }
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px var(--shadow); position: sticky; top: 0; z-index: 1000; }
         .logo { font-size: 28px; font-weight: 800; color: var(--accent-pink); text-decoration: none; }
-        .nav-links a { text-decoration: none; color: white; background: var(--accent-pink); padding: 8px 20px; border-radius: 50px; font-weight: bold; margin-left: 10px; cursor: pointer; }
+        .nav-links a { text-decoration: none; color: white; background: var(--accent-pink); padding: 8px 20px; border-radius: 50px; font-weight: bold; margin-left: 10px; cursor: pointer; transition: 0.3s; }
+        .nav-links a:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .hidden { display: none !important; }
+
+        /* Profile Styles */
         .profile-hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #fde2e4 0%, #e0f7fa 100%); }
         .profile-card { max-width: 600px; margin: -50px auto 40px; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        .avatar-circle { width: 100px; height: 100px; background: var(--accent-pink); color: white; font-size: 40px; line-height: 100px; border-radius: 50%; margin: 0 auto 20px; font-weight: bold; }
+        .avatar-circle { width: 100px; height: 100px; background: var(--accent-pink); color: white; font-size: 40px; line-height: 100px; border-radius: 50%; margin: 0 auto 20px; font-weight: bold; box-shadow: 0 4px 15px var(--shadow); }
         .info-group { margin-bottom: 20px; }
-        .info-group label { display: block; font-size: 14px; color: #64748b; margin-bottom: 5px; }
+        .info-group label { display: block; font-size: 13px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
         .info-group p { font-size: 18px; font-weight: 600; margin: 0; }
-        .edit-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; text-align: center; display: none; }
-        .btn-edit { background: none; border: 1px solid var(--accent-pink); color: var(--accent-pink); padding: 5px 15px; border-radius: 20px; cursor: pointer; margin-top: 10px; }
+        .edit-input { width: 80%; padding: 10px; border: 2px solid var(--accent-pink); border-radius: 12px; font-size: 16px; text-align: center; display: none; margin: 0 auto 10px; outline: none; }
+        .btn-edit { background: none; border: 1.5px solid var(--accent-pink); color: var(--accent-pink); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-edit:hover { background: var(--accent-pink); color: white; }
+
+        /* Liked Items Grid */
         .favorites-section { padding: 0 5%; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 24px; margin-bottom: 30px; border-left: 5px solid var(--accent-pink); padding-left: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .liked-card { background: white; border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .liked-card img { width: 100%; height: 160px; object-fit: cover; }
-        .liked-info { padding: 15px; text-align: center; }
-        .btn-remove { background: #fee2e2; color: #ef4444; border: none; padding: 8px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        .empty-state { padding: 40px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 20px; border: 2px dashed #cbd5e1; grid-column: 1/-1; }
-        .logout-btn { background: #334155; color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; margin-top: 20px; }
+        .section-title { font-size: 26px; margin-bottom: 30px; border-left: 6px solid var(--accent-pink); padding-left: 15px; font-weight: 800; text-align: left; }
+        .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
         
-        /* Debug Info Bar */
-        #debug-log { background: #333; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; position: fixed; bottom: 0; width: 100%; z-index: 9999; display: none; }
+        .liked-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 10px var(--shadow); transition: 0.3s; cursor: pointer; }
+        .liked-card:hover { transform: translateY(-5px); border-color: var(--accent-pink); }
+        .liked-card img { width: 100%; height: 180px; object-fit: cover; }
+        .liked-info { padding: 15px; text-align: center; }
+        .liked-info h3 { font-size: 16px; margin-bottom: 12px; }
+        .btn-remove { background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
+        .btn-remove:hover { background: #ef4444; color: white; }
+        .empty-state { padding: 50px; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 25px; border: 2px dashed #cbd5e1; grid-column: 1 / -1; }
+        .logout-btn { background: #1e293b; color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+
+        /* Step View Styles */
+        .step-view-container { background: var(--card-bg); margin: 20px auto; max-width: 1000px; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .main-img { max-width: 450px; width: 100%; border-radius: 20px; border: 3px solid var(--accent-pink); margin-bottom: 20px; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+        .step-card { background: var(--bg-color); padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); text-align: left; }
+        .step-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
+        .back-btn { background: var(--accent-pink); color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 30px; transition: 0.3s; }
+        .back-btn:hover { transform: translateY(-2px); opacity: 0.9; }
     </style>
 </head>
 <body>
-
-<div id="debug-log">Debug Mode Active...</div>
 
 <header>
     <a href="ak.html" class="logo">Craftopedia</a>
@@ -45,29 +61,43 @@
     </nav>
 </header>
 
-<section class="profile-hero"><h1 id="welcome-header">Welcome!</h1></section>
+<div id="profile-main-view">
+    <section class="profile-hero">
+        <h1 id="welcome-header">Welcome!</h1>
+    </section>
 
-<div class="profile-card">
-    <div class="avatar-circle" id="user-initial">?</div>
-    <div class="info-group">
-        <label>Display Name</label>
-        <p id="display-name">Loading...</p>
-        <input type="text" id="name-input" class="edit-input">
-        <button class="btn-edit" id="edit-btn" onclick="toggleEdit()">Edit Name</button>
+    <div class="profile-card">
+        <div class="avatar-circle" id="user-initial">?</div>
+        <div class="info-group">
+            <label>Display Name</label>
+            <p id="display-name">Loading...</p>
+            <input type="text" id="name-input" class="edit-input">
+            <button class="btn-edit" id="edit-btn" onclick="toggleEdit()">Edit Name</button>
+        </div>
+        <div class="info-group">
+            <label>Email Address</label>
+            <p id="user-email">...</p>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
     </div>
-    <div class="info-group">
-        <label>Email Address</label>
-        <p id="user-email">...</p>
-    </div>
-    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+
+    <section class="favorites-section">
+        <h2 class="section-title">My Liked Crafts</h2>
+        <div id="favorites-grid" class="favorites-grid">
+            <div class="empty-state">Loading your gallery...</div>
+        </div>
+    </section>
 </div>
 
-<section class="favorites-section">
-    <h2 class="section-title">My Liked Crafts</h2>
-    <div id="favorites-grid" class="grid">
-        <div class="empty-state">Looking for your hearts... 💖</div>
+<div id="step-view" class="hidden">
+    <div class="step-view-container">
+        <h2 id="step-title" class="section-title" style="text-align: center;"></h2>
+        <img id="step-main-img" class="main-img" src="">
+        <h3 class="section-title" style="text-align: center;">Instructions</h3>
+        <div id="step-cards-container" class="steps-grid"></div>
+        <button class="back-btn" onclick="showProfile()">⬅ Back to Profile</button>
     </div>
-</section>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -88,7 +118,35 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const debug = (msg) => { console.log(msg); const el = document.getElementById('debug-log'); el.style.display = 'block'; el.innerText += " | " + msg; };
+    // --- CRAFT LIBRARIES ---
+    const paperCraftsLibrary = [
+        { id: "rose", title: "Handmade Rose", img: "rose.jpg", steps: [{img: "step1.jpeg", text: "Step 1: Cut colour paper into equal square pieces."},{img: "step2.jpeg", text: "Step 2: Fold the paper to create petal shape."},{img: "step3.jpeg", text: "Step 3: Glue all petals together and attach a stem."}] },
+        { id: "snowman", title: "Snowman", img: "Snowman.jpeg", steps: [{img: "Snowman Step1.jpg", text: "Step 1: Take red and white colour paper."},{img: "Snowman Step2.jpg", text: "Step 2: Cut 2 white paper strips and fold in circle shape."},{img: "Snowman Step3.jpg", text: "Step 3: Cut a red semicircle for cap and stick white strip on top."},{img: "Snowman Step4.jpg", text: "Step 4: Add eyes, nose, smile, cheeks and buttons."},{img: "Snowman Step5.jpg", text: "Step 5: Stick small dry sticks on both sides."}] },
+        { id: "fish", title: "Fish", img: "Fish.jpeg", steps: [{img: "Fish1.jpg", text: "Step 1: Take rectangle shaped colour paper."},{img: "Fish2.jpg", text: "Step 2: Fold like a fan (Zig-Zag fold)."},{img: "Fish3.jpg", text: "Step 3: Fold the fan into half and glue both sides."},{img: "Fish4.jpg", text: "Step 4: Cut triangle for tail and stick googly eyes."}] },
+        { id: "tree", title: "Tree", img: "Tree.jpg", steps: [{img: "Tree1.jpg", text: "Step 1: Take green colour paper."},{img: "Tree2.jpg", text: "Step 2: Cut different curved shapes and paste bottom to top."},{img: "Tree3.jpg", text: "Step 3: Paste a yellow star on top."},{img: "Tree4.jpg", text: "Step 4: Decorate with pom-poms and white dots."}] },
+        { id: "crown", title: "Crown", img: "Crown.jpeg", steps: [{img: "Crown1.jpg", text: "Step 1: Cut crown shape from paper."},{img: "Crown2.jpg", text: "Step 2: Stick golden tape or paper."},{img: "Crown3.jpg", text: "Step 3: Add decorative beads."},{img: "Crown4.jpg", text: "Step 4: Stick beads properly."}] },
+        { id: "icecream", title: "Ice Cream", img: "I.jpg", steps: [{img: "I1.jpg", text: "Step 1: Cut cone shape from paper."},{img: "I2.jpg", text: "Step 2: Roll and stick into cone shape."},{img: "I3.jpg", text: "Step 3: Cut fruit shapes and glue on top."},{img: "I4.jpg", text: "Step 4: Insert fruit and straw."}] },
+        { id: "giftbox", title: "Pyramid Gift Box", img: "Gift box.jpg", steps: [{img: "G1.jpg", text: "Step 1: Take square paper."},{img: "G2.jpg", text: "Step 2: Draw fold lines."},{img: "G3.jpg", text: "Step 3: Cut along lines."},{img: "G4.jpg", text: "Step 4: Fold properly."},{img: "G5.jpg", text: "Step 5: Apply glue."},{img: "G6.jpg", text: "Step 6: Stick flaps together."},{img: "G7.jpg", text: "Step 7: Punch holes at top."},{img: "G8.jpg", text: "Step 8: Insert ribbon and tie."}] }
+    ];
+    const drawingCraftsLibrary = [
+        { id: "sketch_pencil", title: "Pencil Drawing", img: "drawing.jpeg", steps: [{img: "drawing.jpeg", text: "Follow the reference image to practice your shading."}] },
+        { id: "sketch_pooh", title: "Pooh Drawing", img: "Pooh.jpg", steps: [{img: "Pooh.jpg", text: "Sketch lightly first, then darken the main outlines of the bear."}] },
+        { id: "sketch_mickey", title: "Mickey Mouse", img: "Mickey mouse.jpg", steps: [{img: "Mickey mouse.jpg", text: "Start with circles for the head and ears before adding facial details."}] },
+        { id: "sketch_flower", title: "Flower painting", img: "Flower.jpg", steps: [{img: "Flower.jpg", text: "Use bright colors to paint the petals and blend carefully."}] },
+        { id: "sketch_village", title: "Green Village House", img: " V.jpg", steps: [{img: " V.jpg", text: "Draw the background scenery first, then detail the village house."}] }
+    ];
+    const diyCraftsLibrary = [
+        { id: "diy1", title: "Bottle Art", img: "bottle.jpg", steps: [{img: "b1.jpg", text: "Clean..."},{img: "b2.jpg", text: "Paint..."},{img: "b3.jpg", text: "Varnish..."}] },
+        { id: "diy2", title: "Popsicle Sticks House", img: "S.jpeg", steps: [{ img: "S1.jpeg", text: "Arrange ice cream sticks side by side..." },{ img: "S2.jpeg", text: "Cut sticks to make two triangle shapes..." },{ img: "S3.jpeg", text: "Make a small round hole..." },{ img: "S4.jpeg", text: "Paint the birdhouse..." }] },
+        { id: "diy3", title: "Paper Cup House", img: "H.jpeg", steps: [{ img: "H1.jpg", text: "Take all materials." },{ img: "H2.jpg", text: "Cut a circle, fold and glue it..." },{ img: "H3.jpg", text: "Draw windows, doors and grass..." },{ img: "H4.jpg", text: "Stick the cone roof on top." }] },
+        { id: "diy4", title: "Treasure Box", img: "Box.jpeg", steps: [{ img: "Box1.jpg", text: "Paint the popsicle sticks..." },{ img: "Box2.jpg", text: "Glue sticks side by side..." },{ img: "Box3.jpg", text: "Fix the lid..." },{ img: "Box4.jpg", text: "Decorate with pearl stickers..." }] },
+        { id: "diy5", title: "Quilled Earrings", img: "Quiled earrings.jpeg", steps: [{ img: "Q1.jpeg", text: "Roll a thin paper strip..." },{ img: "Q2.jpeg", text: "Press the coil gently..." },{ img: "Q3.jpeg", text: "Make 6–7 similar petals." },{ img: "Q4.jpeg", text: "Arrange petals in a circle..." },{ img: "Q5.jpeg", text: "Stick a small pearl bead..." },{ img: "Q6.jpeg", text: "Attach an earring hook..." }] },
+        { id: "diy6", title: "Mini Aquarium", img: "M.jpeg", steps: [{ img: "M1.jpg", text: "Paint the base white..." },{ img: "M2.jpg", text: "Paint stones..." },{ img: "M3.jpg", text: "Make small clay fish..." },{ img: "M4.jpg", text: "Stick fish, add bubbles..." }] },
+        { id: "diy7", title: "Pencil Holder", img: "Pencil holder.jpeg", steps: [{ img: "P1.jpg", text: "Cover the paper cup..." },{ img: "P2.jpg", text: "Stick googly eyes..." },{ img: "P3.jpeg", text: "Add wings and antennae." }] },
+        { id: "diy8", title: "Popsicle Stick Star", img: "Star.jpeg", steps: [{ img: "Star1.jpeg", text: "Take 8-10 ice cream sticks..." },{ img: "Star2.jpeg", text: "Arrange 6 sticks..." },{ img: "Star3.jpeg", text: "Apply glue..." },{ img: "Star4.jpeg", text: "Add extra sticks..." },{ img: "Star5.jpeg", text: "Paint the star..." },{ img: "Star6.jpeg", text: "Attach thread for hanging." }] }
+    ];
+
+    const allCrafts = [...paperCraftsLibrary, ...drawingCraftsLibrary, ...diyCraftsLibrary];
 
     // Elements
     const nameText = document.getElementById('display-name');
@@ -97,57 +155,83 @@
     const initialCircle = document.getElementById('user-initial');
     const editBtn = document.getElementById('edit-btn');
     const favoritesGrid = document.getElementById('favorites-grid');
-
     let isEditing = false;
 
+    // --- INITIALIZE & LOAD DATA ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            debug("User Logged In: " + user.uid);
             const name = user.displayName || "Art Lover";
             nameText.innerText = name;
             emailText.innerText = user.email;
             initialCircle.innerText = name.charAt(0).toUpperCase();
             nameInput.value = name;
-            document.getElementById('welcome-header').innerText = "Hi, " + name + "!";
+            document.getElementById('welcome-header').innerText = `Hi, ${name}!`;
 
-            // START LOADING DATA
-            loadLikes(user.uid);
+            // Load likes from DB
+            const likesRef = collection(db, "users", user.uid, "likes");
+            onSnapshot(likesRef, (snapshot) => {
+                if (snapshot.empty) {
+                    favoritesGrid.innerHTML = `<div class="empty-state"><p>No liked crafts yet. Start exploring the gallery!</p></div>`;
+                    return;
+                }
+
+                // Add an onclick to the whole card, but STOP propagation if they click the remove button
+                favoritesGrid.innerHTML = snapshot.docs.map(doc => {
+                    const item = doc.data();
+                    return `
+                        <div class="liked-card" onclick="openCraft('${item.id}')">
+                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
+                            <div class="liked-info">
+                                <h3>${item.title}</h3>
+                                <button class="btn-remove" onclick="event.stopPropagation(); removeLike('${item.id}')">
+                                    <i class="fa-solid fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
         } else {
-            debug("No user found, redirecting...");
             window.location.href = "login.html";
         }
     });
 
-    function loadLikes(uid) {
-        debug("Connecting to Firestore 'likes' collection...");
-        const likesRef = collection(db, "users", uid, "likes");
-
-        onSnapshot(likesRef, (snapshot) => {
-            debug("Database Response! Documents count: " + snapshot.docs.length);
+    // --- VIEW LOGIC ---
+    window.openCraft = (id) => {
+        const craft = allCrafts.find(c => c.id === id);
+        if(craft) {
+            document.getElementById('step-title').innerText = craft.title;
+            document.getElementById('step-main-img').src = craft.img;
             
-            if (snapshot.empty) {
-                favoritesGrid.innerHTML = `<div class="empty-state"><p>Your collection is empty. Go like some crafts in the Home gallery!</p></div>`;
-                return;
+            const container = document.getElementById('step-cards-container');
+            if(craft.steps && craft.steps.length > 0) {
+                container.innerHTML = craft.steps.map((s, i) => `
+                    <div class="step-card">
+                        <img src="${s.img}" onerror="this.src='https://placehold.co/300x200?text=Step+${i+1}'">
+                        <h4>Step ${i+1}</h4><p>${s.text}</p>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `<p style="text-align:center; padding: 20px;">Instructions coming soon!</p>`;
             }
 
-            favoritesGrid.innerHTML = snapshot.docs.map(doc => {
-                const item = doc.data();
-                debug("Rendering item: " + item.title + " (Image: " + item.img + ")");
-                return `
-                    <div class="liked-card">
-                        <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Image+Missing'">
-                        <div class="liked-info">
-                            <h3>${item.title}</h3>
-                            <button class="btn-remove" onclick="removeLike('${item.id}')"><i class="fa-solid fa-trash"></i> Remove</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }, (err) => {
-            debug("FIRESTORE ERROR: " + err.message);
-        });
-    }
+            // Hide Profile, Show Steps
+            document.getElementById('profile-main-view').classList.add('hidden');
+            document.getElementById('step-view').classList.remove('hidden');
+            window.scrollTo(0, 0); // Scroll to top of instructions
+        } else {
+            // This is for later when we add YouTube videos!
+            alert("This item is not a craft or the instructions are missing.");
+        }
+    };
 
+    window.showProfile = () => {
+        document.getElementById('step-view').classList.add('hidden');
+        document.getElementById('profile-main-view').classList.remove('hidden');
+        window.scrollTo(0, 0);
+    };
+
+    // --- PROFILE ACTIONS ---
     window.toggleEdit = async () => {
         if (!isEditing) {
             nameText.style.display = 'none';
@@ -165,7 +249,7 @@
     };
 
     window.removeLike = async (id) => {
-        if(confirm("Remove this craft?")) {
+        if(confirm("Remove this craft from your favorites?")) {
             await deleteDoc(doc(db, "users", auth.currentUser.uid, "likes", id));
         }
     };
