@@ -171,6 +171,7 @@
     let isEditing = false;
 
     // --- LOAD DATA ---
+// --- LOAD DATA (Corrected Syntax) ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
             const name = user.displayName || "Art Lover";
@@ -180,8 +181,9 @@
             nameInput.value = name;
             document.getElementById('welcome-header').innerText = `Hi, ${name}!`;
 
-            // Updated Collection: likedCrafts
-           const likesRef = collection(db, "users", user.uid, "likes");
+            // FIX: Ensure we are using the "likes" collection
+            const likesRef = collection(db, "users", user.uid, "likes");
+            
             onSnapshot(likesRef, (snapshot) => {
                 staticGrid.innerHTML = '';
                 videoGrid.innerHTML = '';
@@ -195,24 +197,22 @@
                 let hasStatic = false;
                 let hasVideo = false;
 
-                snapshot.docs.forEach(doc => {
-                    const item = doc.data();
+                snapshot.docs.forEach(docSnap => {
+                    const item = docSnap.data();
                     const isVideo = item.type === 'video';
                     
-                   const cardHTML = `
-        <div class="liked-card" onclick="window.openCraft('${item.id}', '${item.type || 'craft'}')">
-            ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
-            <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
-            <div class="liked-info">
-                <h3>${item.title}</h3>
-                
-                <button class="btn-remove" onclick="event.stopPropagation(); window.removeLike('${doc.id}')">
-                    <i class="fa-solid fa-trash"></i> Remove
-                </button>
-                
-            </div>
-        </div>
-    `;
+                    // CRITICAL: Notice the backticks (`) at the start and end of this block!
+                    const cardHTML = `
+                        <div class="liked-card" onclick="window.openCraft('${item.id}', '${item.type || 'craft'}')">
+                            ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
+                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x200?text=Craft'">
+                            <div class="liked-info">
+                                <h3>${item.title}</h3>
+                                <button class="btn-remove" onclick="event.stopPropagation(); window.removeLike('${docSnap.id}')">
+                                    <i class="fa-solid fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
                     `;
 
                     if (isVideo) {
@@ -232,27 +232,23 @@
         }
     });
 
-    // --- VIEW LOGIC ---
+    // --- BUTTON FUNCTIONS ---
     window.openCraft = (id, type) => {
         if (type === 'video') {
             window.open(`https://www.youtube.com/watch?v=${id}`, '_blank');
             return;
         }
-
         const craft = allCrafts.find(c => c.id === id);
         if (craft) {
             document.getElementById('step-title').innerText = craft.title;
             document.getElementById('step-main-img').src = craft.img;
-            
             const container = document.getElementById('step-cards-container');
-            if(craft.steps) {
-                container.innerHTML = craft.steps.map((s, i) => `
-                    <div class="step-card">
-                        <img src="${s.img}" onerror="this.src='https://placehold.co/300x200?text=Step+${i+1}'">
-                        <h4>Step ${i+1}</h4><p>${s.text}</p>
-                    </div>
-                `).join('');
-            }
+            container.innerHTML = craft.steps ? craft.steps.map((s, i) => `
+                <div class="step-card">
+                    <img src="${s.img}" onerror="this.src='https://placehold.co/300x200?text=Step+${i+1}'">
+                    <h4>Step ${i+1}</h4><p>${s.text}</p>
+                </div>
+            `).join('') : '<p>Instructions coming soon!</p>';
             document.getElementById('profile-main-view').classList.add('hidden');
             document.getElementById('step-view').classList.remove('hidden');
             window.scrollTo(0, 0);
@@ -281,28 +277,11 @@
     };
 
     window.removeLike = async (docId) => {
-    // We check if the user is still logged in
-    const user = auth.currentUser;
-    if (!user) {
-        alert("Please login to manage your profile.");
-        return;
-    }
-
-    if (confirm("Are you sure you want to remove this from your collection?")) {
-        try {
-            // FIX: Changed 'likedCrafts' to 'likes' to match your data
-            const itemRef = doc(db, "users", user.uid, "likes", docId);
-            await deleteDoc(itemRef);
-            
-            // Note: Since we are using onSnapshot, the grid will 
-            // automatically refresh itself! No need to reload the page.
-            console.log("Successfully removed document:", docId);
-        } catch (error) {
-            console.error("Delete Error:", error);
-            alert("Could not remove item. Please try again.");
+        if(confirm("Remove this item?")) {
+            // FIX: Using "likes" collection to match your data
+            await deleteDoc(doc(db, "users", auth.currentUser.uid, "likes", docId));
         }
-    }
-};
+    };
 
     window.handleLogout = () => signOut(auth).then(() => window.location.href = "login.html");
 </script>
