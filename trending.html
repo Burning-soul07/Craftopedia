@@ -124,53 +124,72 @@
     <script src="script.js?v=4"></script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBkerGAYmcUC9YF1V9rk-3Ex_ropIlLUS8",
-            authDomain: "craftopedia-d611d.firebaseapp.com",
-            projectId: "craftopedia-d611d",
-            storageBucket: "craftopedia-d611d.firebasestorage.app",
-            messagingSenderId: "1092964176836",
-            appId: "1:1092964176836:web:d82013865be5fe00bd8a91"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBkerGAYmcUC9YF1V9rk-3Ex_ropIlLUS8",
+        authDomain: "craftopedia-d611d.firebaseapp.com",
+        projectId: "craftopedia-d611d",
+        storageBucket: "craftopedia-d611d.firebasestorage.app",
+        messagingSenderId: "1092964176836",
+        appId: "1:1092964176836:web:d82013865be5fe00bd8a91"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        // GLOBAL LIKE FUNCTIONS
-        window.toggleLike = async (id, title, img, btnElement) => {
-            if (!auth.currentUser) {
-                alert("Please log in to save crafts!");
-                return;
-            }
-            const userId = auth.currentUser.uid;
-            const likeRef = doc(db, "users", userId, "likedCrafts", id);
+    // --- THE FIX: GLOBAL LIKE FUNCTION ---
+    window.toggleLike = async (id, title, img, btnElement) => {
+        // 1. Check if user is logged in
+        const user = auth.currentUser;
+        if (!user) {
+            alert("You need to be logged in to save videos! Go to the Home page to Login.");
+            return;
+        }
+
+        const likeRef = doc(db, "users", user.uid, "likedCrafts", id);
+        
+        try {
+            const docSnap = await getDoc(likeRef);
             
-            try {
+            if (docSnap.exists()) {
+                // Already liked? Remove it.
+                await deleteDoc(likeRef);
+                btnElement.classList.remove('active');
+                console.log("Unliked:", title);
+            } else {
+                // Not liked? Save it to Firestore.
+                await setDoc(likeRef, {
+                    title: title,
+                    img: img,
+                    type: 'video', // This identifies it as a YouTube video in your Profile
+                    videoId: id,
+                    timestamp: Date.now()
+                });
+                btnElement.classList.add('active');
+                console.log("Saved to Profile:", title);
+            }
+        } catch (err) {
+            console.error("Firebase Error:", err);
+            alert("Could not save. Check your internet or Firebase permissions.");
+        }
+    };
+
+    // This checks if the video was already liked when the page loads
+    window.checkIfLiked = async (id, btnElement) => {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const likeRef = doc(db, "users", user.uid, "likedCrafts", id);
                 const docSnap = await getDoc(likeRef);
                 if (docSnap.exists()) {
-                    await deleteDoc(likeRef);
-                    btnElement.classList.remove('active');
-                } else {
-                    await setDoc(likeRef, { title, img, type: 'video', videoId: id, timestamp: Date.now() });
                     btnElement.classList.add('active');
                 }
-            } catch (err) { console.error("Like Error:", err); }
-        };
-
-        window.checkIfLiked = async (id, btnElement) => {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    const likeRef = doc(db, "users", user.uid, "likedCrafts", id);
-                    const docSnap = await getDoc(likeRef);
-                    if (docSnap.exists()) btnElement.classList.add('active');
-                }
-            });
-        };
-    </script>
+            }
+        });
+    };
+</script>
 </body>
 </html>
