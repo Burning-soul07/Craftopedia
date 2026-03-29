@@ -13,66 +13,65 @@
     
     <link rel="stylesheet" href="styles.css">
 
-    <style>
-        .hidden { 
-    display: none !important; 
-}
-        .top-back-btn {
-            position: fixed; 
-            top: 20px;
-            left: 20px;
-            background-color: #ff6f91; /* Signature pink */
-            color: white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 4px 12px rgba(255, 111, 145, 0.4);
-            transition: all 0.3s ease;
-            z-index: 9999; 
-            border: 2px solid transparent;
-        }
+   <style>
+    /* 1. THE LOCK: This forces anything with 'hidden' to actually disappear */
+    .hidden { 
+        display: none !important; 
+    }
 
-        .top-back-btn:hover {
-            background-color: #ff4d79; 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 111, 145, 0.6);
-        }
+    .top-back-btn {
+        position: fixed; 
+        top: 20px;
+        left: 20px;
+        background-color: #ff6f91;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 12px rgba(255, 111, 145, 0.4);
+        transition: all 0.3s ease;
+        z-index: 9999; 
+        border: 2px solid transparent;
+    }
 
-        /* --- THE INDESTRUCTIBLE LIKE BUTTON CSS --- */
-        .like-btn {
-            position: absolute !important;
-            top: 15px !important;
-            right: 15px !important;
-            z-index: 1000 !important; 
-            background: white !important;
-            border: none !important;
-            border-radius: 50% !important;
-            width: 40px !important;
-            height: 40px !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
-            transition: transform 0.2s ease;
-        }
-        .like-btn.active { 
-    transform: scale(1.2); 
-}
-        .like-btn i { color: #cbd5e1; font-size: 20px; pointer-events: none; }
-        .like-btn.active i { 
-    color: #ff6f91 !important; 
-}
+    .top-back-btn:hover {
+        background-color: #ff4d79; 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 145, 0.6);
+    }
 
-        .watch-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-    </style>
+    /* 2. THE GHOST HUNTER: This fixes the heart in the corner */
+    .like-btn {
+        position: absolute !important;
+        top: 15px !important;
+        right: 15px !important;
+        z-index: 1000 !important; 
+        background: white !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 40px !important;
+        height: 40px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+        transition: transform 0.2s ease;
+    }
+
+    .like-btn:active { transform: scale(0.9); }
+    .like-btn i { color: #cbd5e1; font-size: 20px; pointer-events: none; }
+    .like-btn.active i { color: #ff6f91 !important; }
+
+    .watch-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+</style>
 </head>
 <body>
 
