@@ -75,10 +75,11 @@ function createCard(target, videoId, img, title) {
     });
 
     // Check if already liked on load
-    if(window.checkIfLiked) {
-        window.checkIfLiked(videoId, likeBtn);
-    }
-}
+    // We use a slight delay to ensure Firebase is ready
+    setTimeout(() => {
+        if(window.checkIfLiked) window.checkIfLiked(videoId, likeBtn);
+    }, 500);
+}}
 
 // 4. State Management: Gallery <-> Theater Mode
 function openVideo(videoId, title) {
