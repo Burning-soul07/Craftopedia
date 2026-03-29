@@ -1,5 +1,5 @@
 // 1. Configuration
-const API_KEY = 'AIzaSyCmH2f37LI1z0TzkgYf0v_IoosxaICIWYY'; 
+const API_KEY = 'AIzaSyBkerGAYmcUC9YF1V9rk-3Ex_ropIlLUS8'; 
 let currentQuery = 'best art and craft tutorials'; // Default landing page search
 const MAX_RESULTS = 12;
 
