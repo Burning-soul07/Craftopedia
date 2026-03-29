@@ -27,7 +27,6 @@ async function fetchCraftVideos(isNewSearch = false) {
         nextPageToken = '';
     }
 
-    // UPDATED: Added &videoCategoryId=26 to target "How-to & Style" category
     const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(currentQuery)}&type=video&videoEmbeddable=true&videoDuration=medium&videoCategoryId=26&pageToken=${nextPageToken}&key=${API_KEY}`;
 
     try {
@@ -47,32 +46,50 @@ async function fetchCraftVideos(isNewSearch = false) {
     }
 }
 
-// 3. Card Creation
+// 3. Card Creation (UPDATED with Heart Button)
 function createCard(target, videoId, img, title) {
     const card = document.createElement('div');
     card.classList.add('video-card');
     card.setAttribute('data-id', videoId);
+    card.style.position = 'relative'; // Required for absolute heart positioning
+
     card.innerHTML = `
+        <button class="like-btn" id="like-${videoId}">
+            <i class="fa-solid fa-heart"></i>
+        </button>
         <img src="${img}" class="thumbnail">
         <div class="video-info"><h3 class="video-title">${title}</h3></div>
     `;
+    
+    // Open Video logic
     card.addEventListener('click', () => openVideo(videoId, title));
     target.appendChild(card);
+
+    // Heart Button Click Logic
+    const likeBtn = card.querySelector(`#like-${videoId}`);
+    likeBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevents the video from opening when clicking the heart
+        if(window.toggleLike) {
+            window.toggleLike(videoId, title, img, likeBtn);
+        }
+    });
+
+    // Check if already liked on load
+    if(window.checkIfLiked) {
+        window.checkIfLiked(videoId, likeBtn);
+    }
 }
 
 // 4. State Management: Gallery <-> Theater Mode
 function openVideo(videoId, title) {
-    // Add referrer policy fix via JS for Error 153
     youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
     nowPlayingTitle.innerText = title;
 
     gallerySection.classList.add('hidden');
     watchSection.classList.remove('hidden');
 
-    // Populate Sidebar with current gallery
     sideGallery.innerHTML = galleryContainer.innerHTML;
     
-    // Refresh sidebar listeners
     const sideCards = sideGallery.querySelectorAll('.video-card');
     sideCards.forEach((card) => {
         const id = card.getAttribute('data-id');
@@ -94,7 +111,6 @@ function closeVideo() {
 function handleSearch() {
     const val = searchInput.value.trim();
     if (val !== "") {
-        // We append keywords to the query to force DIY/Tutorial results
         currentQuery = `${val} art and craft DIY tutorial`; 
         fetchCraftVideos(true);
     }
