@@ -120,6 +120,15 @@ header { background: var(--header-bg); padding: 15px 5%; display: flex; justify-
 .back-btn { background: var(--accent-pink); color: white; border: none; padding: 12px 35px; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 30px; }
 
 footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-color); color: var(--text-sub); }
+
+/* Radha & Love Views */
+#radha-view { padding: 40px 10%; text-align: center; }
+.radha-img { max-width: 550px; width: 100%; border-radius: 30px; border: 5px solid #FFD700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+.radha-desc { font-size: 19px; line-height: 1.8; color: var(--text-main); margin-top: 20px; padding: 25px; background: var(--card-bg); border-radius: 20px; }
+
+#love-view { padding: 40px 10%; text-align: center; }
+.love-img { max-width: 400px; width: 100%; border-radius: 20px; box-shadow: 0 0 30px rgba(255, 111, 145, 0.4); }
+
 </style>
 </head>
 
@@ -173,20 +182,20 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
 <div id="radha-view" class="hidden">
     <h2 class="section-title" style="color:#FFD700">Divine Presence</h2>
     <img src="Radha.jpeg" class="radha-img">
-    <div class="radha-desc">Radha is the embodiment of spiritual love...</div>
-    <button class="back-btn" onclick="showView('home')">Back to Home</button>
+    <div class="radha-desc">Radha is the embodiment of spiritual love and devotion. Her presence illuminates the soul and brings peace to the heart.</div>
+    <button class="back-btn" onclick="window.showView('home')">Back to Home</button>
 </div>
 
 <div id="love-view" class="hidden">
     <h2 class="section-title" style="color:var(--accent-pink)">Sending Love!</h2>
     <img src="hup hup.webp" class="love-img"><br>
-    <button class="back-btn" onclick="showView('home')">Back to Home</button>
+    <button class="back-btn" onclick="window.showView('home')">Back to Home</button>
 </div>
 
 <div id="category-view" class="hidden">
     <h2 id="cat-title" class="section-title"></h2>
     <div id="cat-grid" class="grid"></div>
-    <div style="text-align:center;"><button class="back-btn" onclick="showView('home')">Back to Home</button></div>
+    <div style="text-align:center;"><button class="back-btn" onclick="window.showView('home')">Back to Home</button></div>
 </div>
 
 <div id="step-view" class="hidden">
@@ -221,14 +230,50 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // --- STATIC DATA ---
+    // =======================================================
+    // FULL LIBRARY 1: PAPER CRAFTS
+    // =======================================================
     const paperCraftsLibrary = [
-        { id: "rose", title: "Handmade Rose", img: "rose.jpg", keywords: ["rose", "flower"], steps: [{img: "step1.jpeg", text: "Step 1: Cut..."},{img: "step2.jpeg", text: "Step 2: Fold..."},{img: "step3.jpeg", text: "Step 3: Glue..."}] },
-        { id: "snowman", title: "Snowman", img: "Snowman.jpeg", keywords: ["snowman"], steps: [{img: "Snowman Step1.jpg", text: "Step 1..."}] }
-        // ... (Keep your full libraries here, I shortened for space)
+        { id: "rose", title: "Handmade Rose", img: "rose.jpg", main: "rose.jpg", keywords: ["rose", "flower", "red rose", "paper rose"], steps: [{img: "step1.jpeg", text: "Step 1: Cut colour paper into equal square pieces."},{img: "step2.jpeg", text: "Step 2: Fold the paper to create petal shape."},{img: "step3.jpeg", text: "Step 3: Glue all petals together and attach a stem."}] },
+        { id: "snowman", title: "Snowman", img: "Snowman.jpeg", main: "Snowman.jpeg", keywords: ["snowman", "winter", "snow", "christmas"], steps: [{img: "Snowman Step1.jpg", text: "Step 1: Take red and white colour paper."},{img: "Snowman Step2.jpg", text: "Step 2: Cut 2 white paper strips and fold in circle shape."},{img: "Snowman Step3.jpg", text: "Step 3: Cut a red semicircle for cap and stick white strip on top."},{img: "Snowman Step4.jpg", text: "Step 4: Add eyes, nose, smile, cheeks and buttons."},{img: "Snowman Step5.jpg", text: "Step 5: Stick small dry sticks on both sides."}] },
+        { id: "fish", title: "Fish", img: "Fish.jpeg", main: "Fish.jpeg", keywords: ["fish", "water", "ocean", "sea"], steps: [{img: "Fish1.jpg", text: "Step 1: Take rectangle shaped colour paper."},{img: "Fish2.jpg", text: "Step 2: Fold like a fan (Zig-Zag fold)."},{img: "Fish3.jpg", text: "Step 3: Fold the fan into half and glue both sides."},{img: "Fish4.jpg", text: "Step 4: Cut triangle for tail and stick googly eyes."}] },
+        { id: "tree", title: "Tree", img: "Tree.jpg", main: "Tree.jpg", keywords: ["tree", "plant", "nature", "green"], steps: [{img: "Tree1.jpg", text: "Step 1: Take green colour paper."},{img: "Tree2.jpg", text: "Step 2: Cut different curved shapes and paste bottom to top."},{img: "Tree3.jpg", text: "Step 3: Paste a yellow star on top."},{img: "Tree4.jpg", text: "Step 4: Decorate with pom-poms and white dots."}] },
+        { id: "crown", title: "Crown", img: "Crown.jpeg", main: "Crown.jpeg", keywords: ["crown", "king", "queen", "royal"], steps: [{img: "Crown1.jpg", text: "Step 1: Cut crown shape from paper."},{img: "Crown2.jpg", text: "Step 2: Stick golden tape or paper."},{img: "Crown3.jpg", text: "Step 3: Add decorative beads."},{img: "Crown4.jpg", text: "Step 4: Stick beads properly."}] },
+        { id: "icecream", title: "Ice Cream", img: "I.jpg", main: "I.jpg", keywords: ["ice cream", "icecream", "cone", "summer", "sweet"], steps: [{img: "I1.jpg", text: "Step 1: Cut cone shape from paper."},{img: "I2.jpg", text: "Step 2: Roll and stick into cone shape."},{img: "I3.jpg", text: "Step 3: Cut fruit shapes and glue on top."},{img: "I4.jpg", text: "Step 4: Insert fruit and straw."}] },
+        { id: "giftbox", title: "Pyramid Gift Box", img: "Gift box.jpg", main: "Gift box.jpg", keywords: ["gift box", "giftbox", "box", "pyramid", "present", "birthday"], steps: [{img: "G1.jpg", text: "Step 1: Take square paper."},{img: "G2.jpg", text: "Step 2: Draw fold lines."},{img: "G3.jpg", text: "Step 3: Cut along lines."},{img: "G4.jpg", text: "Step 4: Fold properly."},{img: "G5.jpg", text: "Step 5: Apply glue."},{img: "G6.jpg", text: "Step 6: Stick flaps together."},{img: "G7.jpg", text: "Step 7: Punch holes at top."},{img: "G8.jpg", text: "Step 8: Insert ribbon and tie."}] }
     ];
-    const drawingCraftsLibrary = [{ id: "sketch_pencil", title: "Pencil Drawing", img: "drawing.jpeg", keywords: ["sketch"], steps: [] }];
-    const diyCraftsLibrary = [{ id: "diy1", title: "Bottle Art", img: "bottle.jpg", keywords: ["bottle"], steps: [] }];
+
+    // =======================================================
+    // FULL LIBRARY 2: DRAWING CRAFTS
+    // =======================================================
+    const drawingCraftsLibrary = [
+        { id: "sketch_pencil", title: "Pencil Drawing", img: "drawing.jpeg", keywords: ["pencil drawing", "sketch", "drawing", "pencil"], steps: [{img: "drawing.jpeg", text: "Follow the reference image to practice your shading."}] },
+        { id: "sketch_pooh", title: "Pooh Drawing", img: "Pooh.jpg", keywords: ["pooh", "bear", "drawing", "sketch", "winnie"], steps: [{img: "Pooh.jpg", text: "Sketch lightly first, then darken the main outlines of the bear."}] },
+        { id: "sketch_mickey", title: "Mickey Mouse Drawing", img: "Mickey mouse.jpg", keywords: ["mickey mouse", "mickey", "drawing", "sketch", "disney"], steps: [{img: "Mickey mouse.jpg", text: "Start with circles for the head and ears before adding facial details."}] },
+        { id: "sketch_flower", title: "Flower painting", img: "Flower.jpg", keywords: ["flower painting", "flower", "painting", "art", "paint"], steps: [{img: "Flower.jpg", text: "Use bright colors to paint the petals and blend carefully."}] },
+        { id: "sketch_village", title: "Green Village House Drawing", img: " V.jpg", keywords: ["green village house", "house", "village", "drawing", "scenery", "landscape"], steps: [{img: " V.jpg", text: "Draw the background scenery first, then detail the village house."}] }
+    ];
+
+    // =======================================================
+    // FULL LIBRARY 3: DIY PROJECTS
+    // =======================================================
+    const diyCraftsLibrary = [
+        { id: "diy1", title: "Bottle Art", img: "bottle.jpg", keywords: ["bottle art", "bottle", "painting", "glass", "decor"], steps: [{img: "b1.jpg", text: "Clean..."},{img: "b2.jpg", text: "Paint..."},{img: "b3.jpg", text: "Varnish..."}] },
+        { id: "diy2", title: "Popsicle Sticks House", img: "S.jpeg", keywords: ["popsicle sticks house", "popsicle", "house", "ice cream stick", "stick house"], steps: [{ img: "S1.jpeg", text: "Arrange ice cream sticks side by side to make the base and walls. Glue them properly and let them dry." },{ img: "S2.jpeg", text: "Cut sticks to make two triangle shapes for the roof support. Attach them on top and stick flat sticks over them to form the roof." },{ img: "S3.jpeg", text: "Make a small round hole in the front for the bird entrance and stick a small piece below it as a perch." },{ img: "S4.jpeg", text: "Paint the birdhouse and decorate it. Let it dry completely." }] },
+        { id: "diy3", title: "Paper Cup House", img: "H.jpeg", keywords: ["paper cup house", "paper cup", "house", "cup", "hut"], steps: [{ img: "H1.jpg", text: "Take all materials." },{ img: "H2.jpg", text: "Cut a circle, fold and glue it into a cone shape for the roof." },{ img: "H3.jpg", text: "Draw windows, doors and grass on the paper cup." },{ img: "H4.jpg", text: "Stick the cone roof on top. It is ready!" }] },
+        { id: "diy4", title: "Popsicle Stick Treasure Box", img: "Box.jpeg", keywords: ["treasure box", "box", "popsicle box", "jewelry box", "storage"], steps: [{ img: "Box1.jpg", text: "Paint the popsicle sticks and let them dry completely." },{ img: "Box2.jpg", text: "Glue sticks side by side to make the base and walls. Attach a curved lid." },{ img: "Box3.jpg", text: "Fix the lid and secure all edges properly." },{ img: "Box4.jpg", text: "Decorate with pearl stickers, beads, or a bow." }] },
+        { id: "diy5", title: "Quilled Earrings", img: "Quiled earrings.jpeg", keywords: ["quilled earrings", "earrings", "quilling", "jewelry", "paper jewelry"], steps: [{ img: "Q1.jpeg", text: "Roll a thin paper strip tightly using a quilling tool and secure with glue." },{ img: "Q2.jpeg", text: "Press the coil gently to shape it into a teardrop." },{ img: "Q3.jpeg", text: "Make 6–7 similar petals." },{ img: "Q4.jpeg", text: "Arrange petals in a circle and glue them." },{ img: "Q5.jpeg", text: "Stick a small pearl bead in the center." },{ img: "Q6.jpeg", text: "Attach an earring hook at the back." }] },
+        { id: "diy6", title: "Mini Aquarium", img: "M.jpeg", keywords: ["mini aquarium", "aquarium", "fish tank", "fish", "water craft"], steps: [{ img: "M1.jpg", text: "Paint the base white and create a blue gradient background." },{ img: "M2.jpg", text: "Paint stones and green sea plants." },{ img: "M3.jpg", text: "Make small clay fish, dry and paint them." },{ img: "M4.jpg", text: "Stick fish, add bubbles and apply varnish if desired." }] },
+        { id: "diy7", title: "Pencil Holder", img: "Pencil holder.jpeg", keywords: ["pencil holder", "pen stand", "holder", "desk organizer", "cup"], steps: [{ img: "P1.jpg", text: "Cover the paper cup with colored paper." },{ img: "P2.jpg", text: "Stick googly eyes and draw a smile." },{ img: "P3.jpeg", text: "Add wings and antennae." }] },
+        { id: "diy8", title: "Popsicle Stick Star", img: "Star.jpeg", keywords: ["popsicle stick star", "star", "popsicle star", "christmas star", "decoration"], steps: [{ img: "Star1.jpeg", text: "Take 8-10 ice cream sticks, glue and paint." },{ img: "Star2.jpeg", text: "Arrange 6 sticks in a star shape." },{ img: "Star3.jpeg", text: "Apply glue at each joining point and let dry." },{ img: "Star4.jpeg", text: "Add extra sticks to make it decorative." },{ img: "Star5.jpeg", text: "Paint the star and let it dry." },{ img: "Star6.jpeg", text: "Attach thread for hanging." }] }
+    ];
+
+    const allCrafts = [...paperCraftsLibrary, ...drawingCraftsLibrary, ...diyCraftsLibrary];
+    
+    // --- SPECIAL ANIMATION LOGIC ---
+    const radhaKeywords = ["radhe radhe", "radha", "radha krishna", "RADHA", "RADHE RADHE"];
+    const loveKeywords = ["hup hup", "love"];
+    const loveEmojis = ["😍", "😘", "🥰", "🤗", "🎀"];
 
     let lastView = 'home';
 
@@ -236,6 +281,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     window.showView = (viewId) => {
         ['home', 'category', 'step', 'radha', 'love'].forEach(v => document.getElementById(v + '-view')?.classList.add('hidden'));
         document.getElementById(viewId + '-view')?.classList.remove('hidden');
+        document.getElementById('search-feedback').innerText = "";
     };
 
     window.toggleTheme = () => {
@@ -254,7 +300,11 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
         checkIfLiked(craft.id, mainLike);
 
         const container = document.getElementById('step-cards-container');
-        container.innerHTML = craft.steps.map((s, i) => `<div class="step-card"><img src="${s.img}"><h4>Step ${i+1}</h4><p>${s.text}</p></div>`).join('');
+        if(craft.steps && craft.steps.length > 0) {
+            container.innerHTML = craft.steps.map((s, i) => `<div class="step-card"><img src="${s.img}" onerror="this.src='https://placehold.co/300x200?text=Step+${i+1}'"><h4>Step ${i+1}</h4><p>${s.text}</p></div>`).join('');
+        } else {
+            container.innerHTML = `<p style="text-align:center; padding: 20px;">Instructions coming soon!</p>`;
+        }
         showView('step');
     };
 
@@ -279,18 +329,106 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
         showView('category');
     };
 
-    // --- LIKE LOGIC ---
+    // --- SEARCH & ANIMATIONS ---
+    function searchCraft() {
+        const q = document.getElementById("searchInput").value.toLowerCase().trim();
+        document.getElementById('search-feedback').innerHTML = ""; 
+
+        if (!q) return;
+
+        if(radhaKeywords.includes(q)) { triggerSpecialAnimation(); return; }
+        if(loveKeywords.includes(q)) { triggerLoveAnimation(); return; }
+
+        const foundCraft = allCrafts.find(craft => {
+            const titleMatch = craft.title.toLowerCase().includes(q);
+            const keywordMatch = craft.keywords && craft.keywords.some(kw => kw.toLowerCase().includes(q));
+            return titleMatch || keywordMatch;
+        });
+
+        if(foundCraft) {
+            lastView = 'home';
+            renderSteps(foundCraft);
+        } else { 
+            document.getElementById('search-feedback').innerHTML = "<span style='color:red'>Craft not found. Try 'Rose', 'Drawing', or 'Bottle'</span>"; 
+        }
+    }
+
+    function triggerSpecialAnimation() {
+        const overlay = document.getElementById('special-overlay');
+        overlay.style.display = 'flex';
+        overlay.innerHTML = '';
+        const colors = ["#FFD700", "#FF69B4", "#00FFFF", "#FF8C00"];
+        for(let i=0; i<85; i++) {
+            setTimeout(() => {
+                const span = document.createElement('span');
+                span.className = 'glow-text';
+                span.innerText = 'Radhe Radhe';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                span.style.color = color;
+                span.style.textShadow = `0 0 15px ${color}, 0 0 35px ${color}`;
+                span.style.left = Math.random() * 90 + '%';
+                span.style.top = Math.random() * 90 + '%';
+                span.style.animationDelay = (Math.random() * 4) + 's';
+                overlay.appendChild(span);
+            }, i * 40);
+        }
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            const body = document.body;
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            showView('radha');
+        }, 7000); 
+    }
+
+    function triggerLoveAnimation() {
+        const overlay = document.getElementById('love-overlay');
+        overlay.style.display = 'flex';
+        overlay.innerHTML = '';
+        
+        for(let i=0; i<80; i++) {
+            setTimeout(() => {
+                const span = document.createElement('span');
+                span.className = 'love-emoji';
+                span.innerText = loveEmojis[Math.floor(Math.random() * loveEmojis.length)];
+                
+                const tx = (Math.random() - 0.5) * 120 + 'vw';
+                const ty = (Math.random() - 0.5) * 120 + 'vh';
+                const rot = (Math.random() * 360) + 'deg';
+
+                span.style.setProperty('--tx', tx);
+                span.style.setProperty('--ty', ty);
+                span.style.setProperty('--rot', rot);
+                
+                overlay.appendChild(span);
+            }, i * 40); 
+        }
+
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            showView('love');
+        }, 7000); 
+    }
+
+    // --- FIREBASE LIKE LOGIC ---
     const toggleLike = async (id, title, img, btnElement) => {
         const user = auth.currentUser;
-        if (!user) return;
+        if (!user) {
+            alert("Please log in to save crafts!");
+            return;
+        }
+        // Ensuring we use the "likes" collection to match Profile and Trending!
         const likeRef = doc(db, "users", user.uid, "likes", id);
-        const docSnap = await getDoc(likeRef);
-        if (docSnap.exists()) {
-            await deleteDoc(likeRef);
-            btnElement.classList.remove('active');
-        } else {
-            await setDoc(likeRef, { id, title, img, timestamp: Date.now() });
-            btnElement.classList.add('active');
+        try {
+            const docSnap = await getDoc(likeRef);
+            if (docSnap.exists()) {
+                await deleteDoc(likeRef);
+                btnElement.classList.remove('active');
+            } else {
+                await setDoc(likeRef, { id, title, img, timestamp: Date.now() });
+                btnElement.classList.add('active');
+            }
+        } catch (error) {
+            console.error("Like Error:", error);
         }
     };
 
@@ -305,12 +443,20 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
         if (!user) window.location.href = "login.html";
     });
 
-    // Event Listeners for Buttons
+    // --- EVENT LISTENERS ---
+    document.getElementById('nav-home').onclick = () => showView('home');
+    document.getElementById('theme-btn').onclick = window.toggleTheme;
     document.getElementById('paper-cat-btn').onclick = () => openCategory('paper');
     document.getElementById('diy-cat-btn').onclick = () => openCategory('diy');
     document.getElementById('drawing-cat-btn').onclick = () => openCategory('drawing');
     document.getElementById('step-back-btn').onclick = () => showView(lastView);
-    document.getElementById('searchBtn').onclick = () => { /* Add search logic if needed */ };
+    
+    // Search Listeners
+    document.getElementById('searchBtn').onclick = searchCraft;
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchCraft();
+    });
+
 </script>
 </body>
 </html>
