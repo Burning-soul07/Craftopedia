@@ -231,7 +231,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     const db = getFirestore(app);
 
     // =======================================================
-    // FULL LIBRARY 1: PAPER CRAFTS
+    // FULL LIBRARY 1: PAPER CRAFTS (7 Crafts)
     // =======================================================
     const paperCraftsLibrary = [
         { id: "rose", title: "Handmade Rose", img: "rose.jpg", main: "rose.jpg", keywords: ["rose", "flower", "red rose", "paper rose"], steps: [{img: "step1.jpeg", text: "Step 1: Cut colour paper into equal square pieces."},{img: "step2.jpeg", text: "Step 2: Fold the paper to create petal shape."},{img: "step3.jpeg", text: "Step 3: Glue all petals together and attach a stem."}] },
@@ -244,7 +244,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     ];
 
     // =======================================================
-    // FULL LIBRARY 2: DRAWING CRAFTS
+    // FULL LIBRARY 2: DRAWING CRAFTS (5 Crafts)
     // =======================================================
     const drawingCraftsLibrary = [
         { id: "sketch_pencil", title: "Pencil Drawing", img: "drawing.jpeg", keywords: ["pencil drawing", "sketch", "drawing", "pencil"], steps: [{img: "drawing.jpeg", text: "Follow the reference image to practice your shading."}] },
@@ -255,7 +255,7 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     ];
 
     // =======================================================
-    // FULL LIBRARY 3: DIY PROJECTS
+    // FULL LIBRARY 3: DIY PROJECTS (8 Crafts)
     // =======================================================
     const diyCraftsLibrary = [
         { id: "diy1", title: "Bottle Art", img: "bottle.jpg", keywords: ["bottle art", "bottle", "painting", "glass", "decor"], steps: [{img: "b1.jpg", text: "Clean..."},{img: "b2.jpg", text: "Paint..."},{img: "b3.jpg", text: "Varnish..."}] },
@@ -269,11 +269,6 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
     ];
 
     const allCrafts = [...paperCraftsLibrary, ...drawingCraftsLibrary, ...diyCraftsLibrary];
-    
-    // --- SPECIAL ANIMATION LOGIC ---
-    const radhaKeywords = ["radhe radhe", "radha", "radha krishna", "RADHA", "RADHE RADHE"];
-    const loveKeywords = ["hup hup", "love"];
-    const loveEmojis = ["😍", "😘", "🥰", "🤗", "🎀"];
 
     let lastView = 'home';
 
@@ -329,7 +324,11 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
         showView('category');
     };
 
-    // --- SEARCH & ANIMATIONS ---
+    // --- ANIMATIONS & SEARCH ---
+    const radhaKeywords = ["radhe radhe", "radha", "radha krishna", "RADHA", "RADHE RADHE"];
+    const loveKeywords = ["hup hup", "love"];
+    const loveEmojis = ["😍", "😘", "🥰", "🤗", "🎀"];
+
     function searchCraft() {
         const q = document.getElementById("searchInput").value.toLowerCase().trim();
         document.getElementById('search-feedback').innerHTML = ""; 
@@ -416,7 +415,6 @@ footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-c
             alert("Please log in to save crafts!");
             return;
         }
-        // Ensuring we use the "likes" collection to match Profile and Trending!
         const likeRef = doc(db, "users", user.uid, "likes", id);
         try {
             const docSnap = await getDoc(likeRef);
